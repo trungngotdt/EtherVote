@@ -55,11 +55,43 @@ namespace EthereumVoting.Utilities
         /// <summary>
         /// 
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="addressFrom"></param>
+        /// <param name="gas"></param>
+        /// <param name="nameFunc"></param>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        Task<T> CallFunctionAsync<T>(string addressFrom, HexBigInteger gas, string nameFunc, object[] para = null);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="addressFrom"></param>
+        /// <param name="getGas"></param>
+        /// <param name="nameFunc"></param>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        Task<TransactionReceipt> SendTransactionFunctionAsync(string addressFrom, HexBigInteger getGas, string nameFunc, object[] para = null);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="addressFrom">your wallet address</param>
         /// <param name="nameFunc"></param>
         /// <param name="para"></param>
         /// <returns></returns>
         Task<TransactionReceipt> SendTransactionFunctionAsync(string addressFrom, string nameFunc, object[] para = null);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="addressFrom"></param>
+        /// <param name="gas"></param>
+        /// <param name="nameFunc"></param>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        Task<T> GetCallDeserializingToObjectAsync<T>(string addressFrom, HexBigInteger gas, string nameFunc, params object[] para) where T : new();
 
         /// <summary>
         /// 

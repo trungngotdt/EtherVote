@@ -22,7 +22,19 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="Aqua"/>
         <Grid Grid.Row="1">
-            <ListView x:Name="LstCandicates"></ListView>
+            <ListView x:Name="LstCandicates"
+                      ItemsSource="{Binding Candidates}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}"/>
+                            
+                        </StackPanel>
+                    </DataTemplate>
+                    
+                </ListView.ItemTemplate>
+            </ListView>
+            
         </Grid>
     </Grid>
 </Window>

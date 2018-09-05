@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using EthereumVoting.Model;
+using System.Linq;
 using System.Collections.Generic;
 using EthereumVoting.Utilities;
 using Microsoft.Practices.ServiceLocation;
@@ -9,6 +10,7 @@ using Nethereum.Web3;
 using Nethereum.Hex.HexTypes;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace EthereumVoting.ViewModel
 {
@@ -20,6 +22,8 @@ namespace EthereumVoting.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        const int barrerWait = 10;
+        const int numFakeData = 20;
         private List<Candidate> candidates;
 
         private IHelper helper;
@@ -49,9 +53,9 @@ namespace EthereumVoting.ViewModel
             }
         }
 
-        public List<Candidate> Candidates { get => candidates; set => candidates = value; }
+        public List<Candidate> Candidates { get => candidates??new List<Candidate>(); set =>Set(ref candidates , value); }
         public IHelper GetHelper { get => helper; }
-        public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync();await FakeDataAsync();GetCandidatesAsync(); });
+        public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync(); await FakeDataAsync();await GetCandidatesAsync(); });
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -60,53 +64,85 @@ namespace EthereumVoting.ViewModel
         {
             this.helper = _helper;
             //TestAsync();
-            
+            Candidates = new List<Candidate>();
 
         }
 
         private async Task FakeDataAsync()
         {
-            List<Task> tasks = new List<Task>();
-            for (int i = 0; i < 10; i++)
+            try
             {
-                tasks.Add( GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i }));
+                List<Task> tasks = new List<Task>();
+                
+                for (int i = 0; i < numFakeData; i++)
+                {
+                    tasks.Add(GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i }));
+                    if(i%barrerWait==0&&i!=0||i==numFakeData-1)
+                    {
+                        await Task.WhenAll(tasks);
+                        tasks = new List<Task>();
+                    }
+                }
+                tasks = null;
             }
-            await Task.WhenAll(tasks);
+            catch (System.Exception)
+            {
+                throw;
+            }
+            
         }
 
         const string address = "0x12890d2cce102216644c59daE5baed380d84830c";
         const string address2 = "0x09211ef59f3c21b600c979c2122b2b32de9a86aa";
+
         const string pass2 = "123";
 
         const string pass = "password";
 
         private async Task GetCandidatesAsync()
         {
-            var r= await GetCandidateAsync();
-            /*List<Task<Candidate>> tasks = new List<Task<Candidate>>();
-            for (int i = 0; i < 10; i++)
+            //var r= await GetCandidateAsync();
+            try
             {
-                tasks.Add( Task.Factory.StartNew<Candidate>(() =>
+                int checkCount = await GetCountAsync();
+                List<Task<Candidate>> tasks = new List<Task<Candidate>>();
+                for (int i = 0; i < numFakeData; i++)
                 {
-                    var result= GetCandidateAsync(i).Result;
-                    return  result;
-                }));
-                
+                    
+                    tasks.Add(Task.Factory.StartNew<Task<Candidate>>(async () =>
+                    {
+                       var result = await GetCandidateAsync(i);
+                       return result;
+                    }).Result);
+                    if(i%barrerWait==0&&i!=0||i==numFakeData-1)
+                    {
+                        var resultTask = await Task.WhenAll<Candidate>(tasks);
+                        
+                        Candidates.AddRange(resultTask);
+                        RaisePropertyChanged("Candidates");
+                        resultTask = null;
+                        tasks = new List<Task<Candidate>>();
+                    }
+                }
             }
-            var resultAll= await Task.WhenAll<Candidate>(tasks);*/
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
-        public async Task<Candidate[]> GetCandidateAsync()
+        private async Task<int> GetCountAsync()
         {
-            List<Candidate> list = new List<Candidate>();
-            for (int i = 0; i < 10; i++)
-            {
-                var name = await GetHelper.CallFunctionAsync<string>(address, "listCan", new object[] { i });
-                var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { name });
-                list.Add(task);
-            }
-            
-            return list.ToArray();
+            int count = await GetHelper.CallFunctionAsync<int>(address, "GetVoterCount", null);
+            return count;
+        }
+
+        public async Task<Candidate> GetCandidateAsync(int i)
+        {
+            var name = await GetHelper.CallFunctionAsync<string>(address, "listCan", new object[] { i });
+            var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { name });
+            return task;
         }
 
 
@@ -116,11 +152,11 @@ namespace EthereumVoting.ViewModel
             {
                 GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
 
-                var r1 = await GetHelper.CheckUnlockAccountAsync(address, pass);
+                var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
                 //var r2 = await GetHelper.CheckUnlockAccountAsync(address2, pass2);
 
-                var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"), ServiceLocator.Current.GetInstance<string>("bytecode"),
-                    address);
+                var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"),
+                    ServiceLocator.Current.GetInstance<string>("bytecode"),address);
                 GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), deployContract.ContractAddress);
                 /*
                 for (int i = 0; i < 10; i++)
@@ -137,7 +173,6 @@ namespace EthereumVoting.ViewModel
             }
             catch (System.Exception ex)
             {
-
                 throw ex;
             }
 
