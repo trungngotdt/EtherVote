@@ -7,13 +7,21 @@
         mc:Ignorable="d ignore"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         Title="MVVM Light Application" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Regular"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+         Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="{DynamicResource MaterialDesignFont}"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding CommandLoaded}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    
+
     <Grid x:Name="LayoutRoot">
 
         <Grid.RowDefinitions>
@@ -24,17 +32,25 @@
         <Grid Grid.Row="1">
             <ListView x:Name="LstCandicates"
                       ItemsSource="{Binding Candidates}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}"/>
-                            
-                        </StackPanel>
-                    </DataTemplate>
-                    
-                </ListView.ItemTemplate>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name"
+                                        DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Number of Vote"
+                                        DisplayMemberBinding="{Binding NumVote}"/>
+                        <GridViewColumn>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}"
+                                                  IsChecked="{Binding IsCheck}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                    </GridView>
+                </ListView.View>
             </ListView>
-            
+
         </Grid>
     </Grid>
 </Window>

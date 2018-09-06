@@ -13,6 +13,7 @@ namespace EthereumVoting.Model
         private string name;
         private int numVote;
         private bool isExist;
+        private bool isCheck;
 
         [Parameter("bytes32", "name", 1)]
         public string Name { get => name; set => name = value; }
@@ -22,7 +23,8 @@ namespace EthereumVoting.Model
 
         [Parameter("bool", "isExist", 3)]
         public bool IsExist { get => isExist; set => isExist = value; }
-        
+        public bool IsCheck { get => isCheck; set => isCheck = value; }
+
         public Candidate()
         {
 

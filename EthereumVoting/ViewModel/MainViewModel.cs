@@ -11,6 +11,7 @@ using Nethereum.Hex.HexTypes;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
+using System;
 
 namespace EthereumVoting.ViewModel
 {
@@ -24,7 +25,7 @@ namespace EthereumVoting.ViewModel
     {
         const int barrerWait = 10;
         const int numFakeData = 20;
-        private List<Candidate> candidates;
+        private ObservableCollection<Candidate> candidates;
 
         private IHelper helper;
 
@@ -53,7 +54,7 @@ namespace EthereumVoting.ViewModel
             }
         }
 
-        public List<Candidate> Candidates { get => candidates??new List<Candidate>(); set =>Set(ref candidates , value); }
+        public ObservableCollection<Candidate> Candidates { get => candidates??new ObservableCollection<Candidate>(); set =>Set(ref candidates , value); }
         public IHelper GetHelper { get => helper; }
         public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync(); await FakeDataAsync();await GetCandidatesAsync(); });
 
@@ -64,7 +65,7 @@ namespace EthereumVoting.ViewModel
         {
             this.helper = _helper;
             //TestAsync();
-            Candidates = new List<Candidate>();
+            Candidates = new ObservableCollection<Candidate>();
 
         }
 
@@ -107,8 +108,7 @@ namespace EthereumVoting.ViewModel
                 int checkCount = await GetCountAsync();
                 List<Task<Candidate>> tasks = new List<Task<Candidate>>();
                 for (int i = 0; i < numFakeData; i++)
-                {
-                    
+                {                    
                     tasks.Add(Task.Factory.StartNew<Task<Candidate>>(async () =>
                     {
                        var result = await GetCandidateAsync(i);
@@ -117,8 +117,8 @@ namespace EthereumVoting.ViewModel
                     if(i%barrerWait==0&&i!=0||i==numFakeData-1)
                     {
                         var resultTask = await Task.WhenAll<Candidate>(tasks);
-                        
-                        Candidates.AddRange(resultTask);
+                        Array.ForEach(resultTask, item => { Candidates.Add(item); });
+                        //Candidates.AddRange(resultTask);
                         RaisePropertyChanged("Candidates");
                         resultTask = null;
                         tasks = new List<Task<Candidate>>();
