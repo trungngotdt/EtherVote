@@ -18,7 +18,8 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    
+        <Grid x:Name="LayoutRoot">
 
         <TextBlock FontSize="36"
                    FontWeight="Bold"

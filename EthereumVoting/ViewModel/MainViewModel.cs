@@ -12,6 +12,7 @@ using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System;
+using System.Windows.Navigation;
 
 namespace EthereumVoting.ViewModel
 {
@@ -31,32 +32,16 @@ namespace EthereumVoting.ViewModel
 
 
         private ICommand commandLoaded;
-        /// <summary>
-        /// The <see cref="WelcomeTitle" /> property's name.
-        /// </summary>
-        public const string WelcomeTitlePropertyName = "WelcomeTitle";
+        private ICommand commandBtnSubmitedClick;
+        private ICommand commandChecked;
 
-        private string _welcomeTitle = string.Empty;
-
-        /// <summary>
-        /// Gets the WelcomeTitle property.
-        /// Changes to that property's value raise the PropertyChanged event. 
-        /// </summary>
-        public string WelcomeTitle
-        {
-            get
-            {
-                return _welcomeTitle;
-            }
-            set
-            {
-                Set(ref _welcomeTitle, value);
-            }
-        }
-
-        public ObservableCollection<Candidate> Candidates { get => candidates??new ObservableCollection<Candidate>(); set =>Set(ref candidates , value); }
+        public ObservableCollection<Candidate> Candidates { get => candidates ?? new ObservableCollection<Candidate>(); set => Set(ref candidates, value); }
         public IHelper GetHelper { get => helper; }
-        public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync(); await FakeDataAsync();await GetCandidatesAsync(); });
+        public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync(); await FakeDataAsync(); await GetCandidatesAsync(); });
+
+        public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(async () => { await SubmitVotingAsync(); });
+
+        public ICommand CommandChecked => commandChecked = new RelayCommand<string>((name) => { ToogleChecked(name); });
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -64,9 +49,7 @@ namespace EthereumVoting.ViewModel
         public MainViewModel(IHelper _helper)
         {
             this.helper = _helper;
-            //TestAsync();
             Candidates = new ObservableCollection<Candidate>();
-
         }
 
         private async Task FakeDataAsync()
@@ -74,11 +57,11 @@ namespace EthereumVoting.ViewModel
             try
             {
                 List<Task> tasks = new List<Task>();
-                
+
                 for (int i = 0; i < numFakeData; i++)
                 {
                     tasks.Add(GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i }));
-                    if(i%barrerWait==0&&i!=0||i==numFakeData-1)
+                    if (i % barrerWait == 0 && i != 0 || i == numFakeData - 1)
                     {
                         await Task.WhenAll(tasks);
                         tasks = new List<Task>();
@@ -90,7 +73,7 @@ namespace EthereumVoting.ViewModel
             {
                 throw;
             }
-            
+
         }
 
         const string address = "0x12890d2cce102216644c59daE5baed380d84830c";
@@ -100,30 +83,41 @@ namespace EthereumVoting.ViewModel
 
         const string pass = "password";
 
+        private void ToogleChecked(string name)
+        {
+            Candidates.AsParallel().ForAll(item => 
+            {
+                item.IsEnable =item.Name.Equals(name)&&!item.IsCheck?true:item.IsCheck;
+            });
+            RaisePropertyChanged("Candidates");
+        }
+
         private async Task GetCandidatesAsync()
         {
-            //var r= await GetCandidateAsync();
             try
             {
-                int checkCount = await GetCountAsync();
+                var arrayTemp = new List<Candidate>();
                 List<Task<Candidate>> tasks = new List<Task<Candidate>>();
                 for (int i = 0; i < numFakeData; i++)
-                {                    
+                {
                     tasks.Add(Task.Factory.StartNew<Task<Candidate>>(async () =>
                     {
-                       var result = await GetCandidateAsync(i);
-                       return result;
+                        var result = await GetCandidateAsync(i);
+                        result.IsEnable = true;
+                        return result;
                     }).Result);
-                    if(i%barrerWait==0&&i!=0||i==numFakeData-1)
+                    if (i % barrerWait == 0 && i != 0 || i == numFakeData - 1)
                     {
                         var resultTask = await Task.WhenAll<Candidate>(tasks);
-                        Array.ForEach(resultTask, item => { Candidates.Add(item); });
-                        //Candidates.AddRange(resultTask);
-                        RaisePropertyChanged("Candidates");
+                        arrayTemp.AddRange(resultTask);
                         resultTask = null;
                         tasks = new List<Task<Candidate>>();
                     }
                 }
+                Candidates = new ObservableCollection<Candidate>(arrayTemp.OrderBy(i => i.Name));
+                RaisePropertyChanged("Candidates");
+                arrayTemp = null;
+                tasks = null;
             }
             catch (System.Exception ex)
             {
@@ -145,6 +139,15 @@ namespace EthereumVoting.ViewModel
             return task;
         }
 
+        private async Task SubmitVotingAsync()
+        {
+
+            var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
+            await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
+            var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
+            can.NumVote++;
+            //NavigationService.Navigate();
+        }
 
         private async Task InitContractVotingAsync()
         {
@@ -153,31 +156,15 @@ namespace EthereumVoting.ViewModel
                 GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
 
                 var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
-                //var r2 = await GetHelper.CheckUnlockAccountAsync(address2, pass2);
 
                 var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"),
-                    ServiceLocator.Current.GetInstance<string>("bytecode"),address);
+                    ServiceLocator.Current.GetInstance<string>("bytecode"), address);
                 GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), deployContract.ContractAddress);
-                /*
-                for (int i = 0; i < 10; i++)
-                {
-                    await GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i });
-                }
-
-                ArrayList arrayList = new ArrayList();
-                for (int l = 0; l < 10; l++)
-                {
-                    var result1 = await GetHelper.CallFunctionAsync<string>(address2, "listCan", new object[] { l });
-                    arrayList.Add(result1);
-                }*/
             }
             catch (System.Exception ex)
             {
                 throw ex;
             }
-
-
-
         }
 
         ////public override void Cleanup()

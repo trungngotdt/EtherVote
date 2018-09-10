@@ -97,7 +97,9 @@
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Candidate.cs" />
+    <Compile Include="Utilities\FrameNavigationService.cs" />
     <Compile Include="Utilities\Helper.cs" />
+    <Compile Include="Utilities\IFrameNavigationService.cs" />
     <Compile Include="Utilities\IHelper.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
