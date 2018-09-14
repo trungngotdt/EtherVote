@@ -3,7 +3,6 @@ using EthereumVoting.Model;
 using System.Linq;
 using System.Collections.Generic;
 using EthereumVoting.Utilities;
-using Microsoft.Practices.ServiceLocation;
 using System.Threading.Tasks;
 using System.Collections;
 using Nethereum.Web3;
@@ -13,6 +12,7 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System;
 using System.Windows.Navigation;
+using CommonServiceLocator;
 
 namespace EthereumVoting.ViewModel
 {
@@ -85,9 +85,10 @@ namespace EthereumVoting.ViewModel
 
         private void ToogleChecked(string name)
         {
+
             Candidates.AsParallel().ForAll(item => 
             {
-                item.IsEnable =item.Name.Equals(name)&&!item.IsCheck?true:item.IsCheck;
+                item.IsEnable = item.Name.Equals(name) || !item.IsEnable;
             });
             RaisePropertyChanged("Candidates");
         }
