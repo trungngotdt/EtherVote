@@ -14,6 +14,7 @@ using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
 using EthereumVoting.Model;
 using EthereumVoting.Utilities;
+using EthereumVoting.Utilities.HelperMongo;
 
 namespace EthereumVoting.ViewModel
 {
@@ -41,7 +42,9 @@ namespace EthereumVoting.ViewModel
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<IHelper, Helper>();
-
+            SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
+            SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
+            
             SimpleIoc.Default.Register<string>(()=>abi,"abi");
             SimpleIoc.Default.Register<string>(() => link, "link");
             SimpleIoc.Default.Register<string>(() => byteCode, "bytecode");

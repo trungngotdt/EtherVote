@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System;
 using System.Windows.Navigation;
 using CommonServiceLocator;
+using EthereumVoting.Utilities.HelperMongo;
 
 namespace EthereumVoting.ViewModel
 {
@@ -29,7 +30,7 @@ namespace EthereumVoting.ViewModel
         private ObservableCollection<Candidate> candidates;
 
         private IHelper helper;
-
+        private IHelperMongo helperMongo;
 
         private ICommand commandLoaded;
         private ICommand commandBtnSubmitedClick;
@@ -43,12 +44,18 @@ namespace EthereumVoting.ViewModel
 
         public ICommand CommandChecked => commandChecked = new RelayCommand<string>((name) => { ToogleChecked(name); });
 
+        public IHelperMongo HelperMongo { get => helperMongo; set => helperMongo = value; }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IHelper _helper)
+        public MainViewModel(IHelper _helper,IHelperMongo _helperMongo)
         {
             this.helper = _helper;
+            this.helperMongo = _helperMongo;
+            HelperMongo.GetClient("127.0.0.1", 27017, "user1", "pass1");
+            HelperMongo.GetDatabase("data1");
+            HelperMongo.GetCollection<string>("");
             Candidates = new ObservableCollection<Candidate>();
         }
 
