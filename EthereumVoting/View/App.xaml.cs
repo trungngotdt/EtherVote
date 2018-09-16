@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 
-namespace EthereumVoting
+namespace EthereumVoting.View
 {
     /// <summary>
     /// Interaction logic for App.xaml

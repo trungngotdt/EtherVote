@@ -33,12 +33,23 @@ namespace EthereumVoting.Utilities.HelperMongo
             }
         }
 
-        public IMongoCollection<T> GetCollection<T>(string nameOfCollection)
+        public IGetMongoCollection GetMongoCollection()
         {
-            var getMongoCollection = ServiceLocator.Current.GetInstance<IGetMongoCollection>();
+            try
+            {
+                return ServiceLocator.Current.GetInstance<IGetMongoCollection>();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
+            /*
             var data = Database.GetCollection<User>("user").Find(new BsonDocument()).ToList();
             getMongoCollection.Init(Database, "user", typeof(User));
-            return null;
+            var arr = getMongoCollection.GetData(Builders<User>.Filter.Empty);
+            return null;*/
         }
 
         public IMongoDatabase GetDatabase(string nameOfDatabase,MongoDatabaseSettings settings=null)

@@ -11,7 +11,6 @@ using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System;
-using System.Windows.Navigation;
 using CommonServiceLocator;
 using EthereumVoting.Utilities.HelperMongo;
 
@@ -31,6 +30,7 @@ namespace EthereumVoting.ViewModel
 
         private IHelper helper;
         private IHelperMongo helperMongo;
+        private IRegisterParamaters registerParamaters;
 
         private ICommand commandLoaded;
         private ICommand commandBtnSubmitedClick;
@@ -46,16 +46,19 @@ namespace EthereumVoting.ViewModel
 
         public IHelperMongo HelperMongo { get => helperMongo; set => helperMongo = value; }
 
+        string address;
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IHelper _helper,IHelperMongo _helperMongo)
+        public MainViewModel(IHelper _helper,IHelperMongo _helperMongo, IRegisterParamaters _registerParamaters)
         {
+            this.registerParamaters = _registerParamaters;
             this.helper = _helper;
             this.helperMongo = _helperMongo;
             HelperMongo.GetClient("127.0.0.1", 27017, "user1", "pass1");
             HelperMongo.GetDatabase("data1");
-            HelperMongo.GetCollection<string>("");
+            address = registerParamaters.GetParamater("address").ToString();
+            var collec= HelperMongo.GetMongoCollection();
             Candidates = new ObservableCollection<Candidate>();
         }
 
@@ -83,12 +86,12 @@ namespace EthereumVoting.ViewModel
 
         }
 
-        const string address = "0x12890d2cce102216644c59daE5baed380d84830c";
+        /*
         const string address2 = "0x09211ef59f3c21b600c979c2122b2b32de9a86aa";
 
         const string pass2 = "123";
 
-        const string pass = "password";
+        const string pass = "password";*/
 
         private void ToogleChecked(string name)
         {
@@ -161,9 +164,9 @@ namespace EthereumVoting.ViewModel
         {
             try
             {
-                GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
+                //GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
 
-                var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
+                //var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
 
                 var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"),
                     ServiceLocator.Current.GetInstance<string>("bytecode"), address);

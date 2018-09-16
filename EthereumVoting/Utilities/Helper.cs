@@ -134,7 +134,7 @@ namespace EthereumVoting.Utilities
                 try
                 {
                     var gas = await GetGasAsync(nameFunc, para);
-                    var result = await Contracts.GetFunction(nameFunc).CallAsync<T>(addressFrom, gas, null, functionInput: para);
+                    var result = await CallFunctionAsync<T>(addressFrom, gas, nameFunc,  para);
                     return result;
                 }
                 catch (Exception ex)

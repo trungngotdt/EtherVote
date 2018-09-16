@@ -15,6 +15,7 @@ using CommonServiceLocator;
 using EthereumVoting.Model;
 using EthereumVoting.Utilities;
 using EthereumVoting.Utilities.HelperMongo;
+using System;
 
 namespace EthereumVoting.ViewModel
 {
@@ -41,13 +42,26 @@ namespace EthereumVoting.ViewModel
             
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ShellViewModel>();
+
             SimpleIoc.Default.Register<IHelper, Helper>();
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
             SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
+			SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
             
             SimpleIoc.Default.Register<string>(()=>abi,"abi");
             SimpleIoc.Default.Register<string>(() => link, "link");
             SimpleIoc.Default.Register<string>(() => byteCode, "bytecode");
+
+            SetupNavigation();
+        }
+
+        private static void SetupNavigation()
+        {
+            var navigationService = new FrameNavigationService();
+            navigationService.Configure("Login", new Uri("../View/LoginWindow.xaml", UriKind.Relative));
+            navigationService.Configure("Main", new Uri("../View/MainWindow.xaml", UriKind.Relative));
+            SimpleIoc.Default.Register<IFrameNavigationService>(() => navigationService);
         }
 
         /// <summary>
@@ -65,7 +79,7 @@ namespace EthereumVoting.ViewModel
         }
 
         /// <summary>
-        /// Gets the Main property.
+        /// Gets the Login property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
             "CA1822:MarkMembersAsStatic",
@@ -75,6 +89,21 @@ namespace EthereumVoting.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<LoginViewModel>();
+            }
+        }
+
+
+        /// <summary>
+        /// Gets the Shell property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public ShellViewModel Shell
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ShellViewModel>();
             }
         }
 

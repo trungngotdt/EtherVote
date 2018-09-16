@@ -10,6 +10,6 @@ namespace EthereumVoting.Utilities.HelperMongo
 
         IMongoDatabase GetDatabase(string nameOfDatabase,MongoDatabaseSettings settings=null);
 
-        IMongoCollection<T> GetCollection<T>(string nameOfCollection); 
+        IGetMongoCollection GetMongoCollection(); 
     }
 }

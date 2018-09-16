@@ -10,5 +10,7 @@ namespace EthereumVoting.Utilities.HelperMongo
     public interface IGetMongoCollection
     {
         void Init(IMongoDatabase database, string nameOfCollection, Type type, MongoCollectionSettings settings = null);
+
+        Array GetData(object filter);
     }
 }
