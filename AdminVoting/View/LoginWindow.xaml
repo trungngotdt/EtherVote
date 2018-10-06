@@ -1,0 +1,74 @@
+﻿<Page x:Class="EthereumVoting.View.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EthereumVoting"
+        mc:Ignorable="d"
+        xmlns:helper="clr-namespace:EthereumVoting.Utilities"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="MVVM Light Application"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        ShowsNavigationUI="False"
+        DataContext="{Binding Login, Source={StaticResource Locator}}">
+
+
+    <Grid x:Name="LayoutRoot"
+          VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <TextBlock FontSize="40" VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="Login Page"/>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <TextBox x:Name="TxbAccount"
+                         Text="{Binding Account,Mode=TwoWay}"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Width="500"
+                         FontSize="30"
+                         materialDesign:HintAssist.Hint="Your Address"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <PasswordBox x:Name="PwbPassword"
+                             helper:PasswordHelper.Attach="True"                             
+                             helper:PasswordHelper.Password="{Binding Password,Mode=TwoWay}"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             Width="500"
+                             FontSize="30"
+                             materialDesign:HintAssist.Hint="Password"
+                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Button x:Name="BtnSignIn"
+                    Content="Sign In"
+                    Command="{Binding CommandBtnSubmitClick}"
+                    Width="500"/>
+        </Grid>
+        
+    </Grid>
+</Page>

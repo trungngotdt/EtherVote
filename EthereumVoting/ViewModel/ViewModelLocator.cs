@@ -47,7 +47,7 @@ namespace EthereumVoting.ViewModel
             SimpleIoc.Default.Register<IHelper, Helper>();
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
             SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
-			SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
+            SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
             
             SimpleIoc.Default.Register<string>(()=>abi,"abi");
             SimpleIoc.Default.Register<string>(() => link, "link");

@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthereumVoting", "EthereumVoting\EthereumVoting.csproj", "{27887FFE-CB76-40E3-B6CB-307EB82CFA54}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminVoting", "AdminVoting\AdminVoting.csproj", "{3D172A66-8D45-4EAE-9B54-F2D161DA12D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{0777523B-75D8-41AF-88C5-504A033B98D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{27887FFE-CB76-40E3-B6CB-307EB82CFA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27887FFE-CB76-40E3-B6CB-307EB82CFA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27887FFE-CB76-40E3-B6CB-307EB82CFA54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D172A66-8D45-4EAE-9B54-F2D161DA12D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D172A66-8D45-4EAE-9B54-F2D161DA12D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D172A66-8D45-4EAE-9B54-F2D161DA12D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D172A66-8D45-4EAE-9B54-F2D161DA12D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0777523B-75D8-41AF-88C5-504A033B98D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0777523B-75D8-41AF-88C5-504A033B98D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0777523B-75D8-41AF-88C5-504A033B98D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0777523B-75D8-41AF-88C5-504A033B98D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -23,12 +35,18 @@ Global
 		SolutionGuid = {742B18E6-0C5C-4EB1-B79F-81A5752200B2}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://ngotrung.visualstudio.com/
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = EthereumVoting\\EthereumVoting.csproj
 		SccProjectName1 = EthereumVoting
 		SccLocalPath1 = EthereumVoting
+		SccProjectUniqueName2 = AdminVoting\\AdminVoting.csproj
+		SccProjectName2 = AdminVoting
+		SccLocalPath2 = AdminVoting
+		SccProjectUniqueName3 = CommonLibrary\\CommonLibrary.csproj
+		SccProjectName3 = CommonLibrary
+		SccLocalPath3 = CommonLibrary
 	EndGlobalSection
 EndGlobal
