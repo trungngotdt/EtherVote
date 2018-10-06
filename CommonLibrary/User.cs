@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace EthereumVoting.Model
+namespace CommonLibraryUtilities
 {
     public class User
     {

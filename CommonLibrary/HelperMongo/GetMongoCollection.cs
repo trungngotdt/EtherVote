@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using EthereumVoting.Model;
+
 using MongoDB.Bson;
 using MongoDB.Driver;
 

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using CommonServiceLocator;
-using EthereumVoting.Model;
-
 namespace CommonLibraryUtilities.HelperMongo
 {
     public class HelperMongo : IHelperMongo

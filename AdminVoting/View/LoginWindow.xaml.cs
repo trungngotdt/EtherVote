@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using EthereumVoting.ViewModel;
+using AdminVoting.ViewModel;
 
-namespace EthereumVoting.View
+namespace AdminVoting.View
 {
     /// <summary>
     /// Interaction logic for Login.xaml

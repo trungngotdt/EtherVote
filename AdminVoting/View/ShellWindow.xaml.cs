@@ -17,7 +17,7 @@ namespace AdminVoting.View
     /// <summary>
     /// Interaction logic for ShellWindow.xaml
     /// </summary>
-    public partial class ShellWindow : Window
+    public partial class ShellWindow : Page
     {
         public ShellWindow()
         {

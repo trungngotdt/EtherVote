@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.ComponentModel;
 
-namespace EthereumVoting.Model
+namespace CommonLibraryUtilities
 {
     [FunctionOutput]
     public class Candidate:INotifyPropertyChanged

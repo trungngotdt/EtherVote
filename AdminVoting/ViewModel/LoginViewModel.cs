@@ -1,18 +1,16 @@
-﻿using EthereumVoting.Model;
-using EthereumVoting.Utilities;
-using EthereumVoting.Utilities.HelperMongo;
+﻿using CommonLibraryUtilities;
+using CommonLibraryUtilities.HelperMongo;
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MongoDB.Driver;
-using MongoDB.Bson;
 using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using CommonServiceLocator;
+using MongoDB.Driver;
 
 namespace AdminVoting.ViewModel
 {

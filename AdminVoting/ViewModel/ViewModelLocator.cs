@@ -11,7 +11,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
+using CommonServiceLocator;
 using AdminVoting.Model;
 
 namespace AdminVoting.ViewModel
