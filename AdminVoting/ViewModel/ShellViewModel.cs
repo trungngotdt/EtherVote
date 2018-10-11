@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace AdminVoting.ViewModel
 {
-    class ShellViewModel : ViewModelBase
+    public class ShellViewModel : ViewModelBase
     {
         private IFrameNavigationService _navigationService;
 

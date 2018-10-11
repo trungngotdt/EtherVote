@@ -34,6 +34,7 @@ namespace AdminVoting.ViewModel
         public ICommand CommandBtnSubmitClick=> commandBtnSubmitClick = new RelayCommand(async () => {await SubmitClickAsync(); });
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
+        public IRegisterParamaters RegisterParamaters { get => registerParamaters; set => registerParamaters = value; }
 
         public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
         {
@@ -57,12 +58,12 @@ namespace AdminVoting.ViewModel
         async Task SubmitClickAsync()
         {
             var builder = Builders<User>.Filter;
-            var filter = builder.Eq("available", true) & builder.Eq("address", Account);
+            var filter = builder.Eq("available", true) & builder.Eq("address", Account)&builder.Eq("role","admin");
             var user= getMongoCollection.GetData(filter);
             var checkAccount= user.Length > 0 && await HelperUnti.CheckUnlockAccountAsync(Account, Password);
             if(checkAccount)
             {
-                registerParamaters.SetParamater("address", account);
+                RegisterParamaters.SetParamater("address", account);
                 NavigationService.NavigateTo("Main");
                 Account = null;
                 Password = null;
