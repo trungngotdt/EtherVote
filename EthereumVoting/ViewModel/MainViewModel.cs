@@ -55,10 +55,14 @@ namespace EthereumVoting.ViewModel
             this.registerParamaters = _registerParamaters;
             this.helper = _helper;
             this.helperMongo = _helperMongo;
+            Init();
+        }
+
+        private void Init()
+        {
             HelperMongo.GetClient("127.0.0.1", 27017, "user1", "pass1");
             HelperMongo.GetDatabase("data1");
             address = registerParamaters.GetParamater("address").ToString();
-            var collec= HelperMongo.GetMongoCollection();
             Candidates = new ObservableCollection<Candidate>();
         }
 
@@ -137,11 +141,6 @@ namespace EthereumVoting.ViewModel
 
         }
 
-        private async Task<int> GetCountAsync()
-        {
-            int count = await GetHelper.CallFunctionAsync<int>(address, "GetVoterCount", null);
-            return count;
-        }
 
         public async Task<Candidate> GetCandidateAsync(int i)
         {

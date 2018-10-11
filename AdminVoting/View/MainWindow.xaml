@@ -31,22 +31,23 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="Aqua"/>
         <Grid Grid.Row="1">
-            <ListView x:Name="LstCandicates" 
-                      ItemsSource="{Binding Candidates}">
+            <ListView x:Name="LstAllUser" 
+                      ItemsSource="{Binding AllUser}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Name"
-                                        DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Number of Vote"
-                                        DisplayMemberBinding="{Binding NumVote}"/>
-                        <GridViewColumn Header="aaa"
-                                        DisplayMemberBinding="{Binding NumVote,Mode=TwoWay}"/>
-                        <GridViewColumn Header="Voting">
+                        <GridViewColumn Header="Address"
+                                        DisplayMemberBinding="{Binding Address}"/>
+                        <GridViewColumn Header="Role"
+                                        DisplayMemberBinding="{Binding Role}"/>
+
+                        <GridViewColumn Header="Available">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ToggleButton Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
                                                   ToolTip="MaterialDesignSwitchAccentToggleButton"
-                                                  IsChecked="True" />
+                                                  Command="{Binding ElementName=LstAllUser,Path=DataContext.CommandChecked}"
+                                                  CommandParameter="{Binding Address}"
+                                                  IsChecked="{Binding Available}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

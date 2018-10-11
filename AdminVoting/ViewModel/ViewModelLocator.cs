@@ -12,7 +12,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
-using AdminVoting.Model;
 using CommonLibraryUtilities;
 using CommonLibraryUtilities.HelperMongo;
 using System;

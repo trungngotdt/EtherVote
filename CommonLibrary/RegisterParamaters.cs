@@ -8,7 +8,7 @@ namespace CommonLibraryUtilities
 {
     public class RegisterParamaters:IRegisterParamaters
     {
-        private Dictionary<string, object> paramater;
+        private Dictionary<string, object> paramater=new Dictionary<string, object>();
 
         public object GetParamater(string nameOfPara)
         {            

@@ -12,5 +12,7 @@ namespace CommonLibraryUtilities.HelperMongo
         void Init(IMongoDatabase database, string nameOfCollection, Type type, MongoCollectionSettings settings = null);
 
         Array GetData(object filter);
+
+        object FindOneAndUpdateAsync(object filterPrevious, object filterUpdated);
     }
 }

@@ -16,6 +16,7 @@ namespace AdminVoting.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
+        int[] aa = new int[500];
         private string account;
         private string password;
 
@@ -57,10 +58,11 @@ namespace AdminVoting.ViewModel
         
         async Task SubmitClickAsync()
         {
+            Task<bool> task=HelperUnti.CheckUnlockAccountAsync(Account, Password);
             var builder = Builders<User>.Filter;
             var filter = builder.Eq("available", true) & builder.Eq("address", Account)&builder.Eq("role","admin");
             var user= getMongoCollection.GetData(filter);
-            var checkAccount= user.Length > 0 && await HelperUnti.CheckUnlockAccountAsync(Account, Password);
+            var checkAccount = user.Length > 0 && await task;
             if(checkAccount)
             {
                 RegisterParamaters.SetParamater("address", account);
