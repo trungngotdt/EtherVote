@@ -117,7 +117,7 @@ namespace EthereumVoting.ViewModel
                 {
                     tasks.Add(Task.Factory.StartNew<Task<Candidate>>(async () =>
                     {
-                        var result = await GetCandidateAsync(i);
+                        var result = await GetACandidateAsync(i);
                         result.IsEnable = true;
                         return result;
                     }).Result);
@@ -142,7 +142,7 @@ namespace EthereumVoting.ViewModel
         }
 
 
-        public async Task<Candidate> GetCandidateAsync(int i)
+        public async Task<Candidate> GetACandidateAsync(int i)
         {
             var name = await GetHelper.CallFunctionAsync<string>(address, "listCan", new object[] { i });
             var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { name });

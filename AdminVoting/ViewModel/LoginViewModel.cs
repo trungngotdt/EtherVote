@@ -11,12 +11,13 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using CommonServiceLocator;
 using MongoDB.Driver;
+using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace AdminVoting.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
-        int[] aa = new int[500];
         private string account;
         private string password;
 
@@ -44,7 +45,7 @@ namespace AdminVoting.ViewModel
             this._navigationService = navigationService;
             this.helperMongoUnti = _helperMongo;
             Init();
-        }
+        }        
 
         void Init()
         {
@@ -59,16 +60,19 @@ namespace AdminVoting.ViewModel
         async Task SubmitClickAsync()
         {
             Task<bool> task=HelperUnti.CheckUnlockAccountAsync(Account, Password);
+            var ExpMenu =NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander; 
             var builder = Builders<User>.Filter;
             var filter = builder.Eq("available", true) & builder.Eq("address", Account)&builder.Eq("role","admin");
             var user= getMongoCollection.GetData(filter);
             var checkAccount = user.Length > 0 && await task;
             if(checkAccount)
-            {
+            {                
                 RegisterParamaters.SetParamater("address", account);
                 NavigationService.NavigateTo("Main");
                 Account = null;
-                Password = null;
+                Password = null;                
+                ExpMenu.IsEnabled = true;
+                ExpMenu.Visibility = Visibility.Visible;
             }
         }
 

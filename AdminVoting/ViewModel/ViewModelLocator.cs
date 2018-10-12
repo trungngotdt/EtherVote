@@ -42,6 +42,7 @@ namespace AdminVoting.ViewModel
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ShellViewModel>();
+            SimpleIoc.Default.Register<DeployViewModel>();
 
             SimpleIoc.Default.Register<IHelper, Helper>();
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
@@ -91,6 +92,19 @@ namespace AdminVoting.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the Deploy property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public DeployViewModel Deploy
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<DeployViewModel>();
+            }
+        }
 
         /// <summary>
         /// Gets the Shell property.

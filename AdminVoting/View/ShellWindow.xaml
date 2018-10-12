@@ -17,8 +17,37 @@
     <Grid VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch"
           Background="Red">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" >
+            <Expander ExpandDirection="Right"
+                      Name="ExpMenu"
+                      Visibility="Hidden"
+                      IsEnabled="False"
+                      Grid.Column="0">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" 
+                            Height="{Binding ElementName=ExpMenu,Path=Height}">
+
+                    <TextBlock Text="Menu"
+                               VerticalAlignment="Center"
+                               RenderTransformOrigin=".5,.5">
+                        <TextBlock.LayoutTransform>
+                            <RotateTransform Angle="90" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </StackPanel>
+                </Expander.Header>
+                <StackPanel>
+                    <Button x:Name="UserPanel"
+                            Content="User"/>
+                </StackPanel>
+            </Expander>
+        </Grid>
         <Frame x:Name="MainFrame"
-               Background="Blue"
+               Grid.Column="1"
                NavigationUIVisibility="Hidden"
                VerticalContentAlignment="Stretch"
                HorizontalContentAlignment="Stretch"

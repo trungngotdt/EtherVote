@@ -10,19 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace AdminVoting.View
 {
     /// <summary>
-    /// Interaction logic for ShellWindow.xaml
+    /// Interaction logic for DeployPage.xaml
     /// </summary>
-    public partial class ShellWindow : Page
+    public partial class DeployPage : Page
     {
-        public ShellWindow()
+        public DeployPage()
         {
             InitializeComponent();
         }
-        
     }
 }

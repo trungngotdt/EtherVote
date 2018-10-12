@@ -91,7 +91,7 @@ namespace CommonLibraryUtilities
             }
         }
 
-        private static FrameworkElement GetDescendantFromName(DependencyObject parent, string name)
+        public  FrameworkElement GetDescendantFromName(DependencyObject parent, string name)
         {
             var count = VisualTreeHelper.GetChildrenCount(parent);
 
