@@ -11,8 +11,8 @@ namespace CommonLibraryUtilities
         private Dictionary<string, object> paramater=new Dictionary<string, object>();
 
         public object GetParamater(string nameOfPara)
-        {            
-            return paramater[nameOfPara];
+        {
+            return paramater.ContainsKey(nameOfPara)? paramater[nameOfPara]:null;
         }
 
         public void SetParamater(string nameOfPara,object value)

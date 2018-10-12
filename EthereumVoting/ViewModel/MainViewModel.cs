@@ -1,8 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
-using EthereumVoting.Model;
+using CommonLibraryUtilities;
+using CommonLibraryUtilities.HelperMongo;
 using System.Linq;
 using System.Collections.Generic;
-using EthereumVoting.Utilities;
 using System.Threading.Tasks;
 using System.Collections;
 using Nethereum.Web3;
@@ -12,7 +12,6 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System;
 using CommonServiceLocator;
-using EthereumVoting.Utilities.HelperMongo;
 
 namespace EthereumVoting.ViewModel
 {
@@ -25,7 +24,7 @@ namespace EthereumVoting.ViewModel
     public class MainViewModel : ViewModelBase
     {
         const int barrerWait = 10;
-        const int numFakeData = 20;
+        const int numFakeData = 3;
         private ObservableCollection<Candidate> candidates;
 
         private IHelper helper;
@@ -70,6 +69,7 @@ namespace EthereumVoting.ViewModel
         {
             try
             {
+                /*
                 List<Task> tasks = new List<Task>();
 
                 for (int i = 0; i < numFakeData; i++)
@@ -81,7 +81,7 @@ namespace EthereumVoting.ViewModel
                         tasks = new List<Task>();
                     }
                 }
-                tasks = null;
+                tasks = null;*/
             }
             catch (System.Exception)
             {
@@ -121,14 +121,19 @@ namespace EthereumVoting.ViewModel
                         result.IsEnable = true;
                         return result;
                     }).Result);
+                    /*
                     if (i % barrerWait == 0 && i != 0 || i == numFakeData - 1)
                     {
                         var resultTask = await Task.WhenAll<Candidate>(tasks);
                         arrayTemp.AddRange(resultTask);
                         resultTask = null;
                         tasks = new List<Task<Candidate>>();
-                    }
+                    }*/
                 }
+                var resultTask = await Task.WhenAll<Candidate>(tasks);
+                arrayTemp.AddRange(resultTask);
+                resultTask = null;
+                tasks = new List<Task<Candidate>>();
                 Candidates = new ObservableCollection<Candidate>(arrayTemp.OrderBy(i => i.Name));
                 RaisePropertyChanged("Candidates");
                 arrayTemp = null;
@@ -166,10 +171,10 @@ namespace EthereumVoting.ViewModel
                 //GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
 
                 //var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
-
+                /*
                 var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"),
-                    ServiceLocator.Current.GetInstance<string>("bytecode"), address);
-                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), deployContract.ContractAddress);
+                    ServiceLocator.Current.GetInstance<string>("bytecode"), address);*/
+                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), "0x4b2dabefec292fe235263353162916ad09547864");
             }
             catch (System.Exception ex)
             {

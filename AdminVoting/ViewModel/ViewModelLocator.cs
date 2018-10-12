@@ -61,6 +61,7 @@ namespace AdminVoting.ViewModel
             var navigationService = new FrameNavigationService();
             navigationService.Configure("Login", new Uri("../View/LoginWindow.xaml", UriKind.Relative));
             navigationService.Configure("Main", new Uri("../View/MainWindow.xaml", UriKind.Relative));
+            navigationService.Configure("Deploy", new Uri("../View/DeployWindow.xaml", UriKind.Relative));
             SimpleIoc.Default.Register<IFrameNavigationService>(() => navigationService);
         }
 

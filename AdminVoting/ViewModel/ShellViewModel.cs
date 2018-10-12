@@ -12,7 +12,8 @@ namespace AdminVoting.ViewModel
         private bool isEnabledExpMenu;
         private int visibilityExpMenu;
 
-
+        private ICommand commandBtnDeployClickNavigation;
+        private ICommand commandBtnUserClickNavigation;
         private ICommand commandLoaded;
         private ICommand commandNavigeted;
 
@@ -25,6 +26,8 @@ namespace AdminVoting.ViewModel
         /// Visible 0,Hidden 1,Collapsed 2
         /// </summary>
         public int VisibilityExpMenu { get => visibilityExpMenu; set => visibilityExpMenu = value; }
+        public ICommand CommandBtnDeployClickNavigation => commandBtnDeployClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Deploy"); });
+        public ICommand CommandBtnUserClickNavigation =>commandBtnUserClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Main"); });
 
         public ShellViewModel(IFrameNavigationService navigationService)
         {

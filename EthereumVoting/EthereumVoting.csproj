@@ -111,25 +111,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Utilities\IRegisterParamaters.cs" />
-    <Compile Include="Utilities\RegisterParamaters.cs" />
     <Compile Include="View\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Candidate.cs" />
-    <Compile Include="Model\User.cs" />
     <Compile Include="View\ShellWindow.xaml.cs">
       <DependentUpon>ShellWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\FrameNavigationService.cs" />
-    <Compile Include="Utilities\Helper.cs" />
-    <Compile Include="Utilities\HelperMongo\GetMongoCollection.cs" />
-    <Compile Include="Utilities\HelperMongo\HelperMongo.cs" />
-    <Compile Include="Utilities\HelperMongo\IGetMongoCollection.cs" />
-    <Compile Include="Utilities\IFrameNavigationService.cs" />
-    <Compile Include="Utilities\IHelper.cs" />
-    <Compile Include="Utilities\HelperMongo\IHelperMongo.cs" />
-    <Compile Include="Utilities\PasswordHelper.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ShellViewModel.cs" />
@@ -189,9 +176,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Design\" />
+    <Folder Include="Model\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Contract\Voting.sol" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonLibrary\CommonLibrary.csproj">
+      <Project>{0777523b-75d8-41af-88c5-504a033b98d5}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

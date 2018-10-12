@@ -115,8 +115,8 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ShellViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\DeployWindows.xaml.cs">
-      <DependentUpon>DeployWindows.xaml</DependentUpon>
+    <Compile Include="View\DeployWindow.xaml.cs">
+      <DependentUpon>DeployWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
@@ -124,7 +124,7 @@
     <Compile Include="View\ShellWindow.xaml.cs">
       <DependentUpon>ShellWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="View\DeployWindows.xaml">
+    <Page Include="View\DeployWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,6 +1,4 @@
-﻿using EthereumVoting.Model;
-using EthereumVoting.Utilities;
-using EthereumVoting.Utilities.HelperMongo;
+﻿
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,8 @@ using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using CommonServiceLocator;
+using CommonLibraryUtilities;
+using CommonLibraryUtilities.HelperMongo;
 
 namespace EthereumVoting.ViewModel
 {
@@ -58,10 +58,11 @@ namespace EthereumVoting.ViewModel
         
         async Task SubmitClickAsync()
         {
+            Task<bool> task = HelperUnti.CheckUnlockAccountAsync(Account, Password);
             var builder = Builders<User>.Filter;
             var filter = builder.Eq("available", true) & builder.Eq("address", Account);
             var user= getMongoCollection.GetData(filter);
-            var checkAccount= user.Length > 0 && await HelperUnti.CheckUnlockAccountAsync(Account, Password);
+            var checkAccount = user.Length > 0 && await task;
             if(checkAccount)
             {
                 registerParamaters.SetParamater("address", account);

@@ -12,9 +12,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
-using EthereumVoting.Model;
-using EthereumVoting.Utilities;
-using EthereumVoting.Utilities.HelperMongo;
+using CommonLibraryUtilities;
+using CommonLibraryUtilities.HelperMongo;
 using System;
 
 namespace EthereumVoting.ViewModel

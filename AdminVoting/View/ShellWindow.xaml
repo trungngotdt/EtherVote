@@ -41,8 +41,13 @@
                 </StackPanel>
                 </Expander.Header>
                 <StackPanel>
-                    <Button x:Name="UserPanel"
+                    <Button x:Name="BtnUserPanel"
+                            Command="{Binding CommandBtnUserClickNavigation}"
                             Content="User"/>
+                    <TextBlock/>
+                    <Button x:Name="BtnDeployPanel"
+                            Content="Deploy"
+                            Command="{Binding CommandBtnDeployClickNavigation}"/>
                 </StackPanel>
             </Expander>
         </Grid>
