@@ -1,5 +1,5 @@
-﻿using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+﻿using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using MongoDB.Driver;
@@ -90,6 +90,11 @@ namespace AdminVoting.ViewModel
                 indexUserBeChanged[countUserBeChanged] = index;
                 countUserBeChanged++;
             }
+            else
+            {
+                indexUserBeChanged[ indexUserBeChanged.ToList().IndexOf(index)]=-1;
+            }
+            
         }
 
         private void SubmitUser()
@@ -102,10 +107,9 @@ namespace AdminVoting.ViewModel
                     tempUser.Add(AllUser[x]);
                 }
             });
+            
             for (int i = 0; i < indexUserBeChanged.Count(); i++)
-            {
-
-                
+            {                
                 if (indexUserBeChanged[i]!=-1)
                 {
                     var previous = Builders<User>.Filter.Eq("address", AllUser[indexUserBeChanged[i]].Address);

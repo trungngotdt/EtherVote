@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace CommonLibraryUtilities
+namespace CommonLibrary
 {
     public class User
     {

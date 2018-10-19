@@ -2,7 +2,7 @@
 using MongoDB.Driver;
 using MongoDB.Bson;
 
-namespace CommonLibraryUtilities.HelperMongo
+namespace CommonLibrary.HelperMongo
 {
     public interface IHelperMongo
     {

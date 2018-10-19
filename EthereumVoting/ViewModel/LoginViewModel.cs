@@ -11,8 +11,9 @@ using System.Windows;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using CommonServiceLocator;
-using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+using CommonLibrary;
+using CommonLibrary.HelperMongo;
+using System.Windows.Controls;
 
 namespace EthereumVoting.ViewModel
 {
@@ -26,6 +27,7 @@ namespace EthereumVoting.ViewModel
         private IGetMongoCollection getMongoCollection;
         private IFrameNavigationService _navigationService;
         private IRegisterParamaters registerParamaters;
+        private PropertiesOption option;
 
         private ICommand commandBtnSubmitClick;
 
@@ -36,6 +38,18 @@ namespace EthereumVoting.ViewModel
         public ICommand CommandBtnSubmitClick=> commandBtnSubmitClick = new RelayCommand(async () => {await SubmitClickAsync(); });
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
+
+        public PropertiesOption Option
+        {
+            get
+            {
+                if (option == null)
+                {
+                    return option = ServiceLocator.Current.GetInstance<PropertiesOption>("Option");
+                }
+                return option;
+            }
+        }
 
         public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
         {
@@ -48,9 +62,9 @@ namespace EthereumVoting.ViewModel
 
         void Init()
         {
-            HelperMongoUnti.GetClient("127.0.0.1", 27017, "user1", "pass1");
+            HelperMongoUnti.GetClient(Option.IpAddressMongoDefault, Option.PortMongoDefault, Option.NameUserMongoDefault, Option.PassUserMongoDefault);
             HelperUnti.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
-            var database = HelperMongoUnti.GetDatabase("data1");
+            var database = HelperMongoUnti.GetDatabase(Option.NameOfDBMongoDefault);
             getMongoCollection = HelperMongoUnti.GetMongoCollection();
             getMongoCollection.Init(database, "user", typeof(User));
             
@@ -62,6 +76,7 @@ namespace EthereumVoting.ViewModel
             var builder = Builders<User>.Filter;
             var filter = builder.Eq("available", true) & builder.Eq("address", Account);
             var user= getMongoCollection.GetData(filter);
+            var ExpMenu = NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
             var checkAccount = user.Length > 0 && await task;
             if(checkAccount)
             {
@@ -69,6 +84,8 @@ namespace EthereumVoting.ViewModel
                 NavigationService.NavigateTo("Main");
                 Account = null;
                 Password = null;
+                ExpMenu.IsEnabled = true;
+                ExpMenu.Visibility = Visibility.Visible;
             }
         }
 

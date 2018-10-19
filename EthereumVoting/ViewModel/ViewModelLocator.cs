@@ -12,9 +12,11 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
-using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using System;
+using System.IO;
+using System.Windows;
 
 namespace EthereumVoting.ViewModel
 {
@@ -42,17 +44,37 @@ namespace EthereumVoting.ViewModel
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ShellViewModel>();
+            SimpleIoc.Default.Register<ConfigViewModel>();
 
             SimpleIoc.Default.Register<IHelper, Helper>();
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
             SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
             SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
-            
+            SimpleIoc.Default.Register<IWorkJson, WorkJson>();
+
+
+
+            SimpleIoc.Default.Register<PropertiesOption>(() => PropertiesOption.Instance, "Option");
             SimpleIoc.Default.Register<string>(()=>abi,"abi");
             SimpleIoc.Default.Register<string>(() => link, "link");
             SimpleIoc.Default.Register<string>(() => byteCode, "bytecode");
-
+            CheckExistFileConfig();
             SetupNavigation();
+        }
+
+        private static void CheckExistFileConfig()
+        {
+            if (!Directory.Exists(PropertiesOption.Instance.AddressRootFolder))
+            {
+                Directory.CreateDirectory(PropertiesOption.Instance.AddressRootFolder);
+            }
+            else if(File.Exists(PropertiesOption.Instance.AddressRootFolder + @"\config.json"))
+            {                
+                var resultRead = SimpleIoc.Default.GetInstance<IWorkJson>().ReadJson(PropertiesOption.Instance.AddressRootFolder+@"\config.json");
+                PropertiesOption.Instance.Abi = resultRead[0].Abi;
+                PropertiesOption.Instance.ByteCode = resultRead[0].Bytecode;
+                PropertiesOption.Instance.AddressContract = resultRead[0].AddressBlockChain;
+            }
         }
 
         private static void SetupNavigation()
@@ -60,7 +82,22 @@ namespace EthereumVoting.ViewModel
             var navigationService = new FrameNavigationService();
             navigationService.Configure("Login", new Uri("../View/LoginWindow.xaml", UriKind.Relative));
             navigationService.Configure("Main", new Uri("../View/MainWindow.xaml", UriKind.Relative));
+            navigationService.Configure("Config", new Uri("../View/ConfigWindow.xaml", UriKind.Relative));
             SimpleIoc.Default.Register<IFrameNavigationService>(() => navigationService);
+        }
+
+        /// <summary>
+        /// Gets the ConfigWindow property.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1822:MarkMembersAsStatic",
+            Justification = "This non-static member is needed for data binding purposes.")]
+        public ConfigViewModel Config
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ConfigViewModel>();
+            }
         }
 
         /// <summary>

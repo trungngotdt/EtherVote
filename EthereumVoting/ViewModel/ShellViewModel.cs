@@ -1,5 +1,5 @@
-﻿using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+﻿using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
@@ -18,6 +18,8 @@ namespace EthereumVoting.ViewModel
 
         private ICommand commandLoaded;
         private ICommand commandNavigeted;
+        private ICommand commandBtnConfigClickNavigation;
+        private ICommand commandBtnUserClickNavigation;
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
         public ICommand CommandLoaded => commandLoaded = new RelayCommand(() => { NavigationService.NavigateTo("Login"); });
@@ -26,6 +28,9 @@ namespace EthereumVoting.ViewModel
         {
             //x.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
         });
+
+        public ICommand CommandBtnConfigClickNavigation => commandBtnConfigClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Config"); });
+        public ICommand CommandBtnUserClickNavigation => commandBtnUserClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Main"); });
 
         public ShellViewModel(IFrameNavigationService navigationService)
         {

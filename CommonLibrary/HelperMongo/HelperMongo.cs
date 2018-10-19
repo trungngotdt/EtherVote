@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using CommonServiceLocator;
-namespace CommonLibraryUtilities.HelperMongo
+namespace CommonLibrary.HelperMongo
 {
     public class HelperMongo : IHelperMongo
     {

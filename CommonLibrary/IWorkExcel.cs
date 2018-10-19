@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace CommonLibrary
 {
-    public interface IRegisterParamaters
+    public interface IWorkExcel
     {
-        object GetParamater(string nameOfPara);
-
-        void SetParamater(string nameOfPara, object value);
+        List<object> GetData(string Address);
     }
 }

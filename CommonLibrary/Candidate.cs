@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding.Attributes;
 using System.ComponentModel;
 
-namespace CommonLibraryUtilities
+namespace CommonLibrary
 {
     [FunctionOutput]
     public class Candidate:INotifyPropertyChanged

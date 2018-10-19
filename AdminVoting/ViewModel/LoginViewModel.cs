@@ -1,5 +1,5 @@
-﻿using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+﻿using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
@@ -37,9 +37,11 @@ namespace AdminVoting.ViewModel
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
         public IRegisterParamaters RegisterParamaters { get => registerParamaters; set => registerParamaters = value; }
+        IWorkExcel work;
 
-        public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
+        public LoginViewModel(IWorkExcel excel, IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
         {
+            this.work = excel;
             this.registerParamaters = _registerParamaters;
             this.helperUnti = _helper;
             this._navigationService = navigationService;

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonLibraryUtilities
+namespace CommonLibrary
 {
     public interface IHelper
     {

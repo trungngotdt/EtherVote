@@ -1,4 +1,4 @@
-﻿using CommonLibraryUtilities;
+﻿using CommonLibrary;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System.Windows.Input;

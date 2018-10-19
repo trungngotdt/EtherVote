@@ -31,13 +31,26 @@
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
         </Grid>
         <Grid Grid.Row="1">
-            <TextBox materialDesign:HintAssist.Hint="ByteCode"
+            <TextBox x:Name="TxbByteCode"
+                     materialDesign:HintAssist.Hint="ByteCode"
                      HorizontalAlignment="Stretch"
-                     VerticalAlignment="Center"
+                     VerticalAlignment="Top"
                      FontSize="30"
                      Text="{Binding Bytecode}"
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
 
+            <StackPanel VerticalAlignment="Bottom"
+                        Orientation="Vertical">
+                <TextBox FontSize="10"
+                         
+                         Text="{Binding FileAddress}"
+                         BorderThickness="0.5"
+                         IsEnabled="False"
+                         Width="{Binding ElementName=TxbByteCode,Path=ActualWidth}"/>
+                <Button x:Name="BtnOpenFile"
+                        Content="..."
+                        Command="{Binding CommandBtnOpenFile}"/>
+            </StackPanel>
         </Grid>
         <Grid Grid.Row="3">
             <Button x:Name="BtnDeploy"

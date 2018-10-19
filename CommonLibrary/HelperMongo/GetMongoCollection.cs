@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace CommonLibraryUtilities.HelperMongo
+namespace CommonLibrary.HelperMongo
 {
     public class GetMongoCollection:IGetMongoCollection
     {

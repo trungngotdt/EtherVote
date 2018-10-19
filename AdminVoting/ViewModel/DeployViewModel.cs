@@ -1,5 +1,6 @@
-﻿using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+﻿using CommonLibrary;
+using CommonLibrary.HelperMongo;
+using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
@@ -15,12 +16,21 @@ namespace AdminVoting.ViewModel
     {
         private string abi;
         private string bytecode;
+        private string fileAddress;
+
+        private PropertiesOption option;
+
+        private List<string> candidates;
 
         private IHelper helper;
         private IHelperMongo helperMongo;
         private IRegisterParamaters registerParamaters;
+        private IWorkExcel excel;
+        private IWorkJson json;
 
         private ICommand commandBtnDeployClick;
+        private ICommand commandBtnOpenFile;
+
 
         public IHelper GetHelper { get => helper; }
         public IHelperMongo HelperMongo { get => helperMongo; set => helperMongo = value; }
@@ -31,13 +41,34 @@ namespace AdminVoting.ViewModel
 
         public ICommand CommandBtnDeployClick => commandBtnDeployClick = new RelayCommand(async () => {await InitContractVotingAsync(); });
 
-        string address;
+        public ICommand CommandBtnOpenFile => commandBtnOpenFile = new RelayCommand(() => { OpenLoadFile(); });
 
-        public DeployViewModel(IHelper _helper, IHelperMongo _helperMongo, IRegisterParamaters _registerParamaters)
+        public List<string> Candidates { get => candidates; set => candidates = value; }
+        public string FileAddress { get => fileAddress; set { fileAddress = value; RaisePropertyChanged("FileAddress"); } }
+        public IWorkExcel Excel { get => excel; set => excel = value; }
+        public IWorkJson Json { get => json; set => json = value; }
+
+        string address;
+        public PropertiesOption Option
+        {
+            get
+            {
+                if (option == null)
+                {
+                    return option = ServiceLocator.Current.GetInstance<PropertiesOption>("Option");
+                }
+                return option;
+            }
+        }
+
+
+        public DeployViewModel(IHelper _helper, IHelperMongo _helperMongo, IRegisterParamaters _registerParamaters,IWorkExcel workExcel,IWorkJson workJson)
         {
             this.registerParamaters = _registerParamaters;
             this.helper = _helper;
             this.helperMongo = _helperMongo;
+            this.excel = workExcel;
+            this.json = workJson;
             Init();
         }
 
@@ -52,10 +83,25 @@ namespace AdminVoting.ViewModel
         {
             try
             {
+                Task<List<object>> list = Task.Factory.StartNew<List<object>>(() => Excel.GetData(FileAddress));
                 var deployContract = await GetHelper.DeployContractAsync(Abi,
                     Bytecode, address);
                 GetHelper.GetContract(Abi, deployContract.ContractAddress);
-                await FakeDataAsync();
+                var resultList= await list;
+                List<Task> tasks = new List<Task>();
+                int count = resultList.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    tasks.Add(GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] {resultList[i] }));
+                    if ((i%5==0&&i!=0)||i==count-1)
+                    {
+                        await Task.WhenAll(tasks);
+                        tasks = new List<Task>();
+                    }
+                }
+                Json.WriteJson(new List<ConfigStructure>()
+                { new ConfigStructure() { Abi = Abi, AddressBlockChain = deployContract.ContractAddress, Bytecode = Bytecode } },
+                Option.AddressConfigFileDefault);
             }
             catch (System.Exception ex)
             {
@@ -63,27 +109,29 @@ namespace AdminVoting.ViewModel
             }
         }
 
-
-        private async Task FakeDataAsync()
+        private void OpenLoadFile()
         {
-            try
-            {
-                List<Task> tasks = new List<Task>();
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
 
-                for (int i = 0; i < 3; i++)
-                {
-                    tasks.Add(GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i }));
-                    
-                        
-                }
-                await Task.WhenAll(tasks);
-                tasks = null;
-            }
-            catch (System.Exception)
+
+
+            // Set filter for file extension and default file extension 
+            dlg.DefaultExt = ".xlsx";
+            dlg.Filter = "Excel (*.xlsx)|*.xlsx";
+
+
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = dlg.ShowDialog();
+
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
             {
-                throw;
+                // Open document 
+                FileAddress = dlg.FileName;
             }
 
         }
+       
     }
 }

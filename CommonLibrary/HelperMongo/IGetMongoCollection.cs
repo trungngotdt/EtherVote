@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonLibraryUtilities.HelperMongo
+namespace CommonLibrary.HelperMongo
 {
     public interface IGetMongoCollection
     {

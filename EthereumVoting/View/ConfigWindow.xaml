@@ -1,0 +1,71 @@
+﻿<Page x:Class="EthereumVoting.View.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EthereumVoting"
+        mc:Ignorable="d"
+        xmlns:helper="clr-namespace:CommonLibrary;assembly=CommonLibrary"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="MVVM Light Application"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        ShowsNavigationUI="False"
+        DataContext="{Binding Config, Source={StaticResource Locator}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TextBox materialDesign:HintAssist.Hint="ABI"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Top"
+                     FontSize="30"
+                     IsEnabled="False"
+                     Text="{Binding Abi}"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+            <TextBox materialDesign:HintAssist.Hint="AddressContract"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Bottom"
+                     FontSize="20"
+                     IsEnabled="False"
+                     Text="{Binding AddressContract}"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <TextBox x:Name="TxbByteCode"
+                     materialDesign:HintAssist.Hint="ByteCode"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Top"
+                     FontSize="30"
+                     IsEnabled="False"
+                     Text="{Binding ByteCode}"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+            <StackPanel VerticalAlignment="Bottom"
+                        Orientation="Vertical">
+                <TextBox FontSize="20"                         
+                         Text="{Binding AddressFile}"
+                         BorderThickness="0.5"
+                         IsEnabled="False"
+                         Width="{Binding ElementName=TxbByteCode,Path=ActualWidth}"/>
+                
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="3">
+            <Button x:Name="BtnImport"
+                    Command="{Binding CommandBtnImportConfig}"
+                    Content="Import"/>
+        </Grid>
+    </Grid>
+</Page>

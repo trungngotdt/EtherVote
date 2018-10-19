@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EthereumVoting"
         mc:Ignorable="d"
-        xmlns:helper="clr-namespace:CommonLibraryUtilities;assembly=CommonLibrary"
+        xmlns:helper="clr-namespace:CommonLibrary;assembly=CommonLibrary"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"

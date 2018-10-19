@@ -39,6 +39,7 @@
                                         DisplayMemberBinding="{Binding Address}"/>
                         <GridViewColumn Header="Role"
                                         DisplayMemberBinding="{Binding Role}"/>
+                        
 
                         <GridViewColumn Header="Available">
                             <GridViewColumn.CellTemplate>

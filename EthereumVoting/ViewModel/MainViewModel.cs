@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
-using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,9 +23,17 @@ namespace EthereumVoting.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private Task<int> taskCountCandidates;
+
+
+
         const int barrerWait = 10;
         const int numFakeData = 3;
         private ObservableCollection<Candidate> candidates;
+        private PropertiesOption option;
+        private int countCandidates;
+
+
 
         private IHelper helper;
         private IHelperMongo helperMongo;
@@ -37,15 +45,27 @@ namespace EthereumVoting.ViewModel
 
         public ObservableCollection<Candidate> Candidates { get => candidates ?? new ObservableCollection<Candidate>(); set => Set(ref candidates, value); }
         public IHelper GetHelper { get => helper; }
-        public ICommand CommandLoaded => commandLoaded = new RelayCommand(async () => { await InitContractVotingAsync(); await FakeDataAsync(); await GetCandidatesAsync(); });
+        public ICommand CommandLoaded => commandLoaded = new RelayCommand(()=> { CheckConditionFileConfig(async () =>await LoadedAsync()); });
 
         public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(async () => { await SubmitVotingAsync(); });
 
         public ICommand CommandChecked => commandChecked = new RelayCommand<string>((name) => { ToogleChecked(name); });
 
         public IHelperMongo HelperMongo { get => helperMongo; set => helperMongo = value; }
+        public PropertiesOption Option
+        {
+            get
+            {               
+                if(option==null)
+                {
+                    return option= ServiceLocator.Current.GetInstance<PropertiesOption>("Option");
+                }
+                return option;
+            }
+        }
 
         string address;
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -57,10 +77,17 @@ namespace EthereumVoting.ViewModel
             Init();
         }
 
+        private async Task LoadedAsync()
+        {
+            await InitContractVotingAsync();
+            taskCountCandidates = GetHelper.CallFunctionAsync<int>(address, "GetVoterCount", new object[] {  });
+            await GetCandidatesAsync();
+        }
+
         private void Init()
         {
-            HelperMongo.GetClient("127.0.0.1", 27017, "user1", "pass1");
-            HelperMongo.GetDatabase("data1");
+            HelperMongo.GetClient(Option.IpAddressMongoDefault, Option.PortMongoDefault, Option.NameUserMongoDefault,Option.PassUserMongoDefault);
+            HelperMongo.GetDatabase(Option.NameOfDBMongoDefault);
             address = registerParamaters.GetParamater("address").ToString();
             Candidates = new ObservableCollection<Candidate>();
         }
@@ -113,7 +140,8 @@ namespace EthereumVoting.ViewModel
             {
                 var arrayTemp = new List<Candidate>();
                 List<Task<Candidate>> tasks = new List<Task<Candidate>>();
-                for (int i = 0; i < numFakeData; i++)
+                var count = await taskCountCandidates;
+                for (int i = 0; i < count; i++)
                 {
                     tasks.Add(Task.Factory.StartNew<Task<Candidate>>(async () =>
                     {
@@ -132,12 +160,12 @@ namespace EthereumVoting.ViewModel
                 }
                 var resultTask = await Task.WhenAll<Candidate>(tasks);
                 arrayTemp.AddRange(resultTask);
-                resultTask = null;
-                tasks = new List<Task<Candidate>>();
+                
                 Candidates = new ObservableCollection<Candidate>(arrayTemp.OrderBy(i => i.Name));
                 RaisePropertyChanged("Candidates");
                 arrayTemp = null;
                 tasks = null;
+                resultTask = null;
             }
             catch (System.Exception ex)
             {
@@ -159,7 +187,7 @@ namespace EthereumVoting.ViewModel
 
             var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
             await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
-            var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
+            //var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
             can.NumVote++;
             //NavigationService.Navigate();
         }
@@ -167,18 +195,20 @@ namespace EthereumVoting.ViewModel
         private async Task InitContractVotingAsync()
         {
             try
-            {
-                //GetHelper.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
-
-                //var resultUnlock = await GetHelper.CheckUnlockAccountAsync(address, pass);
-                /*
-                var deployContract = await GetHelper.DeployContractAsync(ServiceLocator.Current.GetInstance<string>("abi"),
-                    ServiceLocator.Current.GetInstance<string>("bytecode"), address);*/
-                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), "0x4b2dabefec292fe235263353162916ad09547864");
+            {                
+                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), "0x7ce7c3cd469c2cff44012bf5913675770b48a3a6");
             }
             catch (System.Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        private void CheckConditionFileConfig(Action method)
+        {
+            if (Option.Abi!=null&&Option.AddressContract != null && Option.ByteCode != null)
+            {
+                method();
             }
         }
 

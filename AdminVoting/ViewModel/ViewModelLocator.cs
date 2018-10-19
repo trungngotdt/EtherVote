@@ -12,8 +12,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using CommonServiceLocator;
-using CommonLibraryUtilities;
-using CommonLibraryUtilities.HelperMongo;
+using CommonLibrary;
+using CommonLibrary.HelperMongo;
 using System;
 
 namespace AdminVoting.ViewModel
@@ -48,7 +48,10 @@ namespace AdminVoting.ViewModel
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
             SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
             SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
+            SimpleIoc.Default.Register<IWorkExcel, WorkExcel>();
+            SimpleIoc.Default.Register<IWorkJson, WorkJson>();
 
+            SimpleIoc.Default.Register<PropertiesOption>(() => PropertiesOption.Instance, "Option");
             SimpleIoc.Default.Register<string>(() => abi, "abi");
             SimpleIoc.Default.Register<string>(() => link, "link");
             SimpleIoc.Default.Register<string>(() => byteCode, "bytecode");
