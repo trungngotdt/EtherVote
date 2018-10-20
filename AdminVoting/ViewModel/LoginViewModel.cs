@@ -13,6 +13,7 @@ using CommonServiceLocator;
 using MongoDB.Driver;
 using System.Windows.Media;
 using System.Windows.Controls;
+using AdminVoting.View;
 
 namespace AdminVoting.ViewModel
 {
@@ -20,6 +21,9 @@ namespace AdminVoting.ViewModel
     {
         private string account;
         private string password;
+        private bool isOpenDialog;
+        private object contentDialog;
+
 
         private IHelper helperUnti;
         private IHelperMongo helperMongoUnti;
@@ -37,11 +41,14 @@ namespace AdminVoting.ViewModel
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
         public IRegisterParamaters RegisterParamaters { get => registerParamaters; set => registerParamaters = value; }
-        IWorkExcel work;
 
-        public LoginViewModel(IWorkExcel excel, IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
+        public bool IsOpenDialog { get => isOpenDialog; set { isOpenDialog = value; RaisePropertyChanged("IsOpenDialog"); } }
+        public object ContentDialog { get => contentDialog; set { contentDialog = value; RaisePropertyChanged("ContentDialog"); } }
+        
+
+        public LoginViewModel( IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
         {
-            this.work = excel;
+            
             this.registerParamaters = _registerParamaters;
             this.helperUnti = _helper;
             this._navigationService = navigationService;
@@ -58,24 +65,37 @@ namespace AdminVoting.ViewModel
             getMongoCollection.Init(database, "user", typeof(User));
             
         }
-        
+
         async Task SubmitClickAsync()
         {
-            Task<bool> task=HelperUnti.CheckUnlockAccountAsync(Account, Password);
-            var ExpMenu =NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander; 
-            var builder = Builders<User>.Filter;
-            var filter = builder.Eq("available", true) & builder.Eq("address", Account)&builder.Eq("role","admin");
-            var user= getMongoCollection.GetData(filter);
-            var checkAccount = user.Length > 0 && await task;
-            if(checkAccount)
-            {                
-                RegisterParamaters.SetParamater("address", account);
-                NavigationService.NavigateTo("Main");
-                Account = null;
-                Password = null;                
-                ExpMenu.IsEnabled = true;
-                ExpMenu.Visibility = Visibility.Visible;
-            }
+            IsOpenDialog = true;
+            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+            
+            var ExpMenu =NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
+            await Task.Factory.StartNew(async () =>
+             {
+                 Task<bool> task = HelperUnti.CheckUnlockAccountAsync(Account, Password);
+
+                 var builder = Builders<User>.Filter;
+                 var filter = builder.Eq("available", true) & builder.Eq("address", Account) & builder.Eq("role", "admin");
+                 var user = getMongoCollection.GetData(filter);
+                 var checkAccount = user.Length > 0 && await task;
+                 if (checkAccount)
+                 {
+                     Application.Current.Dispatcher.Invoke(() =>
+                     {
+                         ExpMenu.IsEnabled = true;
+                         ExpMenu.Visibility = Visibility.Visible;
+                         NavigationService.NavigateTo("Main");
+                     });
+                     RegisterParamaters.SetParamater("address", account);
+                     Account = null;
+                     Password = null;
+                     IsOpenDialog = false;
+                 }
+             });
+
+            
         }
 
     }

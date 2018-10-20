@@ -20,29 +20,31 @@
         ShowsNavigationUI="False"
         DataContext="{Binding Login, Source={StaticResource Locator}}">
 
-
-    <Grid x:Name="LayoutRoot"
+    <materialDesign:DialogHost CloseOnClickAway="True"
+                               IsOpen="{Binding IsOpenDialog}"
+                               DialogContent="{Binding ContentDialog}">
+        <Grid x:Name="LayoutRoot"
           VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-
-        <Grid Grid.Row="0">
-            <TextBlock FontSize="40" VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Text="Login Page"/>
-        </Grid>
-
-        <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+
             <Grid Grid.Row="0">
-                <TextBox x:Name="TxbAccount"
+                <TextBlock FontSize="40" VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="Login Page"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <TextBox x:Name="TxbAccount"
                          Text="{Binding Account,Mode=TwoWay}"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Center"
@@ -50,9 +52,9 @@
                          FontSize="30"
                          materialDesign:HintAssist.Hint="Your Address"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-            </Grid>
-            <Grid Grid.Row="1">
-                <PasswordBox x:Name="PwbPassword"
+                </Grid>
+                <Grid Grid.Row="1">
+                    <PasswordBox x:Name="PwbPassword"
                              helper:PasswordHelper.Attach="True"                             
                              helper:PasswordHelper.Password="{Binding Password,Mode=TwoWay}"
                              VerticalAlignment="Center"
@@ -61,14 +63,15 @@
                              FontSize="30"
                              materialDesign:HintAssist.Hint="Password"
                              Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                </Grid>
             </Grid>
-        </Grid>
-        <Grid Grid.Row="2">
-            <Button x:Name="BtnSignIn"
+            <Grid Grid.Row="2">
+                <Button x:Name="BtnSignIn"
                     Content="Sign In"
                     Command="{Binding CommandBtnSubmitClick}"
                     Width="500"/>
+            </Grid>
+
         </Grid>
-        
-    </Grid>
+    </materialDesign:DialogHost>
 </Page>

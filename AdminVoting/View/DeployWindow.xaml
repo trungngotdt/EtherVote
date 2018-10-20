@@ -15,7 +15,7 @@
       FontFamily="{DynamicResource MaterialDesignFont}"
       DataContext="{Binding Deploy, Source={StaticResource Locator}}"
       Title="DeployPage">
-    <Grid>
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>

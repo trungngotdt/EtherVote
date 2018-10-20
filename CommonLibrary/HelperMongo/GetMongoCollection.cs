@@ -34,6 +34,10 @@ namespace CommonLibrary.HelperMongo
         }
 
        
+        public void InserOne(object obj)
+        {
+            GetMethod(mongoCollection.GetType(), "InsertOne", mongoCollection, new object[] {obj,null,default(System.Threading.CancellationToken) });
+        }
 
         public object FindOneAndUpdateAsync(object filterPrevious,object filterUpdated)
         {

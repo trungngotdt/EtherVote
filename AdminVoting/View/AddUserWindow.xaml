@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="AdminVoting.View.AddUserWindow"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:local="clr-namespace:AdminVoting.View"
+            mc:Ignorable="d"
+             xmlns:converter="clr-namespace:AdminVoting.ValueConverterPara"
+            xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+            xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+            TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+            TextElement.FontWeight="Regular"
+            TextElement.FontSize="13"
+            TextOptions.TextFormattingMode="Ideal"
+            TextOptions.TextRenderingMode="Auto"
+             Width="350"
+             DataContext="{Binding AddUser, Source={StaticResource Locator}}"
+             Height="170"
+                Background="{DynamicResource MaterialDesignPaper}"
+                FontFamily="{DynamicResource MaterialDesignFont}">
+    <UserControl.Resources>
+        <converter:ConverterAddUserParaNAR x:Key="ConverterNAR"/>
+    </UserControl.Resources>
+    <Grid Margin="16" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <TextBox x:Name="TxbName"
+                     VerticalAlignment="Center"
+                     materialDesign:HintAssist.Hint="Name"
+                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <TextBlock Text="Role"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <ComboBox HorizontalAlignment="Center"
+                              x:Name="CboRole"
+                              materialDesign:HintAssist.Hint="Role"
+                              materialDesign:HintAssist.HintOpacity=".26"
+                              VerticalAlignment="Center">
+                        <ComboBoxItem>
+                            Admin
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            User
+                        </ComboBoxItem>
+                    </ComboBox>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <TextBlock Text="Available"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <ToggleButton x:Name="TgBAvailable"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button IsDefault="True"
+                    Grid.Column="0"
+                    Style="{DynamicResource MaterialDesignFlatButton}"
+                    Command="{Binding CommandBtnAcceptDialogAddUser}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ConverterNAR}">
+                        <Binding ElementName="TxbName" Path="Text"/>
+                        <Binding ElementName="CboRole" Path="Text"/>
+                        <Binding ElementName="TgBAvailable" Path="IsChecked"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+                ACCEPT
+            </Button>
+            <Button IsCancel="True"
+                    Grid.Column="1"
+                    Style="{DynamicResource MaterialDesignFlatButton}">
+
+                CANCEL
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

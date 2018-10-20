@@ -21,6 +21,9 @@ namespace AdminVoting.ViewModel
         int[] indexUserBeChanged;
         int countUserBeChanged;
 
+        private bool isOpenDialogAddUser;
+        private object contentDialogAddUser;
+
         private IHelper helper;
         private IHelperMongo helperMongo;
         private IRegisterParamaters registerParamaters;
@@ -28,10 +31,14 @@ namespace AdminVoting.ViewModel
 
         private ObservableCollection<User> allUser;
 
+        private ICommand commandOpenDialogAddUser;
+
         private ICommand commandChecked;
         private ICommand commandLoaded;
         private ICommand commandBtnSubmitedClick;
 
+        private ICommand commandBtnAcceptDialogAddUser;
+        private ICommand commandBtnCancelDialogAddUser;
 
         public ICommand CommandLoaded => commandLoaded = new RelayCommand(()=> { GetAllUser(); });
 
@@ -44,6 +51,14 @@ namespace AdminVoting.ViewModel
         public IGetMongoCollection GetMongoCollection { get => getMongoCollection; set => getMongoCollection = value; }
         public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(() => { SubmitUser(); });
         public ICommand CommandChecked => commandChecked = new RelayCommand<string>((address) => { ToggleCheck(address); });
+
+        public bool IsOpenDialogAddUser { get => isOpenDialogAddUser; set {isOpenDialogAddUser = value; RaisePropertyChanged("IsOpenDialogAddUser");} }
+        public ICommand CommandOpenDialogAddUser => commandOpenDialogAddUser = new RelayCommand(() => { OpenDialogAddUser(); });
+
+        public object ContentDialogAddUser { get => contentDialogAddUser; set  {contentDialogAddUser = value; RaisePropertyChanged("ContentDialogAddUser");} }
+
+        public ICommand CommandBtnAcceptDialogAddUser => commandBtnAcceptDialogAddUser = new RelayCommand<object[]>((obj) => { AcceptAddUser(obj); });
+        public ICommand CommandBtnCancelDialogAddUser => commandBtnCancelDialogAddUser = new RelayCommand(() => { CancelAddUser(); });
 
 
 
@@ -64,7 +79,6 @@ namespace AdminVoting.ViewModel
         private void Init()
         {
             HelperMongo.GetClient("127.0.0.1", 27017, "user1", "pass1");
-            HelperMongo.GetDatabase("data1");
             var database = HelperMongo.GetDatabase("data1");
             getMongoCollection = HelperMongo.GetMongoCollection();
             getMongoCollection.Init(database, "user", typeof(User));
@@ -115,13 +129,34 @@ namespace AdminVoting.ViewModel
                     var previous = Builders<User>.Filter.Eq("address", AllUser[indexUserBeChanged[i]].Address);
                     var update = Builders<User>.Update.Set("available", AllUser[indexUserBeChanged[i]].Available);
                     getMongoCollection.FindOneAndUpdateAsync(previous, update);
-
-
                 }
             }
             
         }
 
+
+        private void OpenDialogAddUser()
+        {
+            ContentDialogAddUser = new View.AddUserWindow();
+            IsOpenDialogAddUser = true;
+        }
+
+        private void AcceptAddUser(object[] paras)
+        {
+            if (paras[0].ToString().Trim().Count()==0|| paras[1].ToString().Trim().Count() == 0)
+            {
+                return;
+            }
+            getMongoCollection.InserOne(new User() {Address=paras[0].ToString(), Available=bool.Parse(paras[2].ToString()),Role=paras[1].ToString(),VoteFor=string.Empty });
+            CancelAddUser();
+        }
+
+        private void CancelAddUser()
+        {
+            IsOpenDialogAddUser = false;
+        }
+
+        
 
         ////public override void Cleanup()
         ////{

@@ -21,48 +21,52 @@
             <i:InvokeCommandAction Command="{Binding CommandLoaded}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
-    <Grid x:Name="LayoutRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="0.5*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="Aqua"/>
-        <Grid Grid.Row="1">
-            <ListView x:Name="LstCandicates" 
+    <materialDesign:DialogHost CloseOnClickAway="True"
+                               IsOpen="{Binding IsOpenDialog}"
+                               DialogContent="{Binding ContentDialog}">
+        <Grid x:Name="LayoutRoot">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="0.5*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" Background="Aqua"/>
+            <Grid Grid.Row="1">
+                <ListView x:Name="LstCandicates" 
                       ItemsSource="{Binding Candidates}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name"
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name"
                                         DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="Number of Vote"
+                            <GridViewColumn Header="Number of Vote"
                                         DisplayMemberBinding="{Binding NumVote}"/>
-                        <GridViewColumn Header="aaa"
+                            <GridViewColumn Header="aaa"
                                         DisplayMemberBinding="{Binding NumVote,Mode=TwoWay}"/>
-                        <GridViewColumn Header="Voting">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}"
+                            <GridViewColumn Header="Voting">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ToggleButton Style="{StaticResource MaterialDesignActionToggleButton}"
                                                   IsChecked="{Binding IsCheck,Mode=TwoWay}"
                                                   Command="{Binding ElementName=LstCandicates,Path=DataContext.CommandChecked}"
                                                   CommandParameter="{Binding Name}"
                                                   IsEnabled="{Binding IsEnable,Mode=TwoWay}">
-                                        <ToggleButton.Content>
-                                            <materialDesign:PackIcon Kind="Cancel"/>
-                                        </ToggleButton.Content>
-                                    </ToggleButton>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                                            <ToggleButton.Content>
+                                                <materialDesign:PackIcon Kind="Cancel"/>
+                                            </ToggleButton.Content>
+                                        </ToggleButton>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Button x:Name="BtnSubmited"
+                        Content="Submit"
+                        IsEnabled="{Binding IsEnabledBtnSubmited}"
+                        Command="{Binding CommandBtnSubmitedClick}"/>
+            </Grid>
         </Grid>
-        <Grid Grid.Row="2">
-            <Button x:Name="BtnSubmited"
-                    Content="Submit"
-                    Command="{Binding CommandBtnSubmitedClick}"/>
-        </Grid>
-    </Grid>
+    </materialDesign:DialogHost>
 </Page>

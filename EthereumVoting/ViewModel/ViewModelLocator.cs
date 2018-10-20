@@ -17,6 +17,7 @@ using CommonLibrary.HelperMongo;
 using System;
 using System.IO;
 using System.Windows;
+using EthereumVoting.View;
 
 namespace EthereumVoting.ViewModel
 {
@@ -37,29 +38,41 @@ namespace EthereumVoting.ViewModel
 
         const string byteCode = "60806040526002805460ff1916905534801561001a57600080fd5b506103aa8061002a6000396000f30060806040526004361061008d5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631925d44381146100925780631a0478d5146100ac578063649431e8146100e657806375ab6c2214610110578063805d9d4114610128578063841ada7814610153578063a3ec138d1461016b578063c6ff1274146101b6575b600080fd5b34801561009e57600080fd5b506100aa6004356101e4565b005b3480156100b857600080fd5b506100c4600435610242565b6040805193845260ff9092166020840152151582820152519081900360600190f35b3480156100f257600080fd5b506100fe600435610267565b60408051918252519081900360200190f35b34801561011c57600080fd5b506100aa60043561028a565b34801561013457600080fd5b5061013d6102fc565b6040805160ff9092168252519081900360200190f35b34801561015f57600080fd5b506100fe600435610305565b34801561017757600080fd5b5061019973ffffffffffffffffffffffffffffffffffffffff60043516610324565b60408051921515835260ff90911660208301528051918290030190f35b3480156101c257600080fd5b506100aa73ffffffffffffffffffffffffffffffffffffffff60043516610342565b60008181526020819052604090206001810154610100900460ff161561023e573360009081526003602090815260408083208590558483529082905290206001908101805460ff19811660ff918216909301169190911790555b5050565b6000602081905290815260409020805460019091015460ff8082169161010090041683565b600060018281548110151561027857fe5b90600052602060002001549050919050565b60008181526020819052604081208281556001908101805461010061ffff1990911617905580548082018255918190527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6909101919091556002805460ff19811660ff91821690930116919091179055565b60025460ff1690565b600180548290811061031357fe5b600091825260209091200154905081565b60046020526000908152604090205460ff8082169161010090041682565b73ffffffffffffffffffffffffffffffffffffffff166000908152600460205260409020805461ff001960ff19909116600117166101001790555600a165627a7a72305820d6a0968aaee339a159d6570549056b7bdc869584586144090d5414a6cd1f3c7f0029";
 
+        static ProgressDialogWindow progressDialogWindow;
+
         static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            
+            RegisterV2VM();
+            RegisterClass();
+            RegisterValue();
+            CheckExistFileConfig();
+            SetupNavigation();
+        }
+
+        private static void RegisterV2VM()
+        {
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ShellViewModel>();
             SimpleIoc.Default.Register<ConfigViewModel>();
+        }
 
+        private static void RegisterClass()
+        {
             SimpleIoc.Default.Register<IHelper, Helper>();
             SimpleIoc.Default.Register<IHelperMongo, HelperMongo>();
             SimpleIoc.Default.Register<IGetMongoCollection, GetMongoCollection>();
             SimpleIoc.Default.Register<IRegisterParamaters, RegisterParamaters>();
-            SimpleIoc.Default.Register<IWorkJson, WorkJson>();
+            SimpleIoc.Default.Register<IWorkJson, WorkJson>(); }
 
-
-
+        private static void RegisterValue()
+        {
             SimpleIoc.Default.Register<PropertiesOption>(() => PropertiesOption.Instance, "Option");
-            SimpleIoc.Default.Register<string>(()=>abi,"abi");
+            SimpleIoc.Default.Register<string>(() => abi, "abi");
             SimpleIoc.Default.Register<string>(() => link, "link");
             SimpleIoc.Default.Register<string>(() => byteCode, "bytecode");
-            CheckExistFileConfig();
-            SetupNavigation();
+            SimpleIoc.Default.Register<ProgressDialogWindow>(() => GetProgressDialogWindow(), "Progress");
         }
 
         private static void CheckExistFileConfig()
@@ -114,6 +127,7 @@ namespace EthereumVoting.ViewModel
             }
         }
 
+
         /// <summary>
         /// Gets the Login property.
         /// </summary>
@@ -143,6 +157,16 @@ namespace EthereumVoting.ViewModel
             }
         }
 
+
+        private static ProgressDialogWindow GetProgressDialogWindow()
+        {
+            if (progressDialogWindow==null)
+            {
+                progressDialogWindow = new ProgressDialogWindow();
+                return progressDialogWindow;
+            }
+            return progressDialogWindow;
+        }
 
         /// <summary>
         /// Cleans up all the resources.

@@ -13,6 +13,8 @@ namespace CommonLibrary.HelperMongo
 
         Array GetData(object filter);
 
+        void InserOne(object obj);
+
         object FindOneAndUpdateAsync(object filterPrevious, object filterUpdated);
     }
 }

@@ -22,12 +22,15 @@ namespace CommonLibrary
         public async Task<bool> CheckUnlockAccountAsync(string address, string pass)
         {
             try
-            {
+            {               
                 return await Web30.Personal.UnlockAccount.SendRequestAsync(address, pass, 60);
             }
             catch (Exception ex)
             {
-
+                if (ex.Message.Contains("invalid argument") || ex.Message.Contains("no key"))
+                {
+                    return false;
+                }
                 throw ex;
             }
         }

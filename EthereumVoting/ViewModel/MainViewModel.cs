@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System;
 using CommonServiceLocator;
+using EthereumVoting.View;
+using MongoDB.Driver;
 
 namespace EthereumVoting.ViewModel
 {
@@ -32,11 +34,13 @@ namespace EthereumVoting.ViewModel
         private ObservableCollection<Candidate> candidates;
         private PropertiesOption option;
         private int countCandidates;
-
-
+        private bool isOpenDialog;
+        private object contentDialog;
+        private bool isEnabledBtnSubmited;
 
         private IHelper helper;
         private IHelperMongo helperMongo;
+        private IGetMongoCollection getMongoCollection;
         private IRegisterParamaters registerParamaters;
 
         private ICommand commandLoaded;
@@ -45,7 +49,10 @@ namespace EthereumVoting.ViewModel
 
         public ObservableCollection<Candidate> Candidates { get => candidates ?? new ObservableCollection<Candidate>(); set => Set(ref candidates, value); }
         public IHelper GetHelper { get => helper; }
-        public ICommand CommandLoaded => commandLoaded = new RelayCommand(()=> { CheckConditionFileConfig(async () =>await LoadedAsync()); });
+        public ICommand CommandLoaded => commandLoaded = new RelayCommand(() =>
+        {
+            EffectProgress(()=> { CheckConditionFileConfig(async () => await LoadedAsync()); } );
+        });
 
         public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(async () => { await SubmitVotingAsync(); });
 
@@ -64,6 +71,14 @@ namespace EthereumVoting.ViewModel
             }
         }
 
+        public bool IsOpenDialog { get => isOpenDialog; set { isOpenDialog = value; RaisePropertyChanged("IsOpenDialog"); } }
+        public object ContentDialog { get => contentDialog; set { contentDialog = value; RaisePropertyChanged("ContentDialog"); } }
+
+        public bool IsEnabledBtnSubmited { get => isEnabledBtnSubmited; set {isEnabledBtnSubmited = value; RaisePropertyChanged("IsEnabledBtnSubmited");} }
+
+        /// <summary>
+        /// address of user in blockchain
+        /// </summary>
         string address;
 
         /// <summary>
@@ -74,59 +89,41 @@ namespace EthereumVoting.ViewModel
             this.registerParamaters = _registerParamaters;
             this.helper = _helper;
             this.helperMongo = _helperMongo;
-            Init();
+            
         }
 
         private async Task LoadedAsync()
         {
+            Init();
             await InitContractVotingAsync();
             taskCountCandidates = GetHelper.CallFunctionAsync<int>(address, "GetVoterCount", new object[] {  });
             await GetCandidatesAsync();
+            var votefor = await IsExistVoteFor();
+            if (votefor.Trim().Count()!=0)
+            {
+                IsEnabledBtnSubmited = false;
+                Candidates.AsParallel().ForAll(x => 
+                {
+                    x.IsCheck = x.Name.Equals(votefor);
+                    x.IsEnable = false;
+                });
+            }
         }
 
         private void Init()
         {
+            IsEnabledBtnSubmited = true;
             HelperMongo.GetClient(Option.IpAddressMongoDefault, Option.PortMongoDefault, Option.NameUserMongoDefault,Option.PassUserMongoDefault);
-            HelperMongo.GetDatabase(Option.NameOfDBMongoDefault);
+            var database= HelperMongo.GetDatabase(Option.NameOfDBMongoDefault);
+            getMongoCollection = HelperMongo.GetMongoCollection();
+            getMongoCollection.Init(database, "user", typeof(User));
             address = registerParamaters.GetParamater("address").ToString();
             Candidates = new ObservableCollection<Candidate>();
         }
 
-        private async Task FakeDataAsync()
-        {
-            try
-            {
-                /*
-                List<Task> tasks = new List<Task>();
-
-                for (int i = 0; i < numFakeData; i++)
-                {
-                    tasks.Add(GetHelper.SendTransactionFunctionAsync(address, "SetCandidate", new object[] { "who" + i }));
-                    if (i % barrerWait == 0 && i != 0 || i == numFakeData - 1)
-                    {
-                        await Task.WhenAll(tasks);
-                        tasks = new List<Task>();
-                    }
-                }
-                tasks = null;*/
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-
-        }
-
-        /*
-        const string address2 = "0x09211ef59f3c21b600c979c2122b2b32de9a86aa";
-
-        const string pass2 = "123";
-
-        const string pass = "password";*/
 
         private void ToogleChecked(string name)
         {
-
             Candidates.AsParallel().ForAll(item => 
             {
                 item.IsEnable = item.Name.Equals(name) || !item.IsEnable;
@@ -149,14 +146,7 @@ namespace EthereumVoting.ViewModel
                         result.IsEnable = true;
                         return result;
                     }).Result);
-                    /*
-                    if (i % barrerWait == 0 && i != 0 || i == numFakeData - 1)
-                    {
-                        var resultTask = await Task.WhenAll<Candidate>(tasks);
-                        arrayTemp.AddRange(resultTask);
-                        resultTask = null;
-                        tasks = new List<Task<Candidate>>();
-                    }*/
+                    
                 }
                 var resultTask = await Task.WhenAll<Candidate>(tasks);
                 arrayTemp.AddRange(resultTask);
@@ -187,8 +177,13 @@ namespace EthereumVoting.ViewModel
 
             var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
             await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
+            var previous = Builders<User>.Filter.Eq("address", address);
+            var update = Builders<User>.Update.Set("VoteFor", can.Name);
+            getMongoCollection.FindOneAndUpdateAsync(previous, update);
             //var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
             can.NumVote++;
+            IsEnabledBtnSubmited = false;
+            can.IsEnable = false;
             //NavigationService.Navigate();
         }
 
@@ -210,6 +205,30 @@ namespace EthereumVoting.ViewModel
             {
                 method();
             }
+        }
+
+        private Task< string> IsExistVoteFor()
+        {
+            return Task.Factory.StartNew<string>(() => 
+            {
+                var builder = Builders<User>.Filter;
+                var filter = builder.Eq("available", true) & builder.Eq("address", address);
+                var user = getMongoCollection.GetData(filter);
+
+                return user.Cast<User>().ElementAt(0).VoteFor;
+
+            });
+            
+        }
+
+        private void EffectProgress(Action action)
+        {
+            IsOpenDialog = true;
+            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+            Task.Factory.StartNew(() =>
+            {
+                action();
+            }).ContinueWith(t => { IsOpenDialog = false; }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         ////public override void Cleanup()

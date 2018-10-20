@@ -22,8 +22,11 @@
             <i:InvokeCommandAction Command="{Binding CommandLoaded}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
+    <materialDesign:DialogHost CloseOnClickAway="True"
+                                       IsOpen="{Binding IsOpenDialogAddUser}"
+                                       DialogContent="{Binding ContentDialogAddUser}">
     <Grid x:Name="LayoutRoot">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="3*"/>
@@ -57,10 +60,25 @@
             </ListView>
         </Grid>
         <Grid Grid.Row="2">
-            <Button x:Name="BtnSubmited"
-                    Content="Submit"
-                    Command="{Binding CommandBtnSubmitedClick}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+     
+                <Button x:Name="BtnAddUser"
+                        Grid.Column="0"
+                        Command="{Binding CommandOpenDialogAddUser}"
+                        Margin="0.75,0.75,0.75,0.75"
+                        Content="Add User"/>
+            
+                
+                <Button x:Name="BtnSubmited"
+                        Grid.Column="1"
+                        Margin="0.75,0.75,0.75,0.75"
+                        Content="Submit"
+                        Command="{Binding CommandBtnSubmitedClick}"/>
+            
         </Grid>
 
-    </Grid>
+    </Grid></materialDesign:DialogHost>
 </Page>

@@ -17,7 +17,7 @@ namespace CommonLibrary
         private string address;
         private bool available;
         private string role;
-
+        private string voteFor;
 
         [BsonId]
         public ObjectId Id { get=>id; set=>id=value; }
@@ -30,6 +30,9 @@ namespace CommonLibrary
 
         [BsonElement("available")]
         public bool Available { get => available; set { available = value; OnPropertyChanged("Available"); } }
+
+        [BsonElement("VoteFor")]
+        public string VoteFor { get => voteFor; set => voteFor = value; }
 
         protected void OnPropertyChanged(string name)
         {

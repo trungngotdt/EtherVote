@@ -1,6 +1,7 @@
 ﻿
 using GalaSoft.MvvmLight;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ using CommonServiceLocator;
 using CommonLibrary;
 using CommonLibrary.HelperMongo;
 using System.Windows.Controls;
+using EthereumVoting.View;
 
 namespace EthereumVoting.ViewModel
 {
@@ -21,6 +23,9 @@ namespace EthereumVoting.ViewModel
     {
         private string account;
         private string password;
+        private bool isOpenDialog;
+        private object contentDialog;
+
 
         private IHelper helperUnti;
         private IHelperMongo helperMongoUnti;
@@ -35,9 +40,14 @@ namespace EthereumVoting.ViewModel
         public IHelperMongo HelperMongoUnti { get => helperMongoUnti; set => helperMongoUnti = value; }
         public string Account { get => account; set => account = value; }
         public string Password { get => password; set => password = value; }
-        public ICommand CommandBtnSubmitClick=> commandBtnSubmitClick = new RelayCommand(async () => {await SubmitClickAsync(); });
+        public ICommand CommandBtnSubmitClick => commandBtnSubmitClick = new RelayCommand(async () => { await SubmitClickAsync(); });
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
+
+
+        public bool IsOpenDialog { get => isOpenDialog; set { isOpenDialog = value; RaisePropertyChanged("IsOpenDialog"); } }
+        public object ContentDialog { get => contentDialog; set { contentDialog = value; RaisePropertyChanged("ContentDialog"); } }
+
 
         public PropertiesOption Option
         {
@@ -51,7 +61,9 @@ namespace EthereumVoting.ViewModel
             }
         }
 
-        public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
+
+
+        public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService, IRegisterParamaters _registerParamaters)
         {
             this.registerParamaters = _registerParamaters;
             this.helperUnti = _helper;
@@ -62,31 +74,53 @@ namespace EthereumVoting.ViewModel
 
         void Init()
         {
-            HelperMongoUnti.GetClient(Option.IpAddressMongoDefault, Option.PortMongoDefault, Option.NameUserMongoDefault, Option.PassUserMongoDefault);
-            HelperUnti.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
-            var database = HelperMongoUnti.GetDatabase(Option.NameOfDBMongoDefault);
-            getMongoCollection = HelperMongoUnti.GetMongoCollection();
-            getMongoCollection.Init(database, "user", typeof(User));
-            
+            IsOpenDialog = true;
+            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+            Task taskProcess = Task.Factory.StartNew(() =>
+            {
+                HelperMongoUnti.GetClient(Option.IpAddressMongoDefault, Option.PortMongoDefault, Option.NameUserMongoDefault, Option.PassUserMongoDefault);
+                HelperUnti.GetWeb3(ServiceLocator.Current.GetInstance<string>("link"));
+                var database = HelperMongoUnti.GetDatabase(Option.NameOfDBMongoDefault);
+                getMongoCollection = HelperMongoUnti.GetMongoCollection();
+                getMongoCollection.Init(database, "user", typeof(User));
+            }).ContinueWith(t => { IsOpenDialog = false; },TaskScheduler.FromCurrentSynchronizationContext());
         }
-        
+
         async Task SubmitClickAsync()
         {
-            Task<bool> task = HelperUnti.CheckUnlockAccountAsync(Account, Password);
-            var builder = Builders<User>.Filter;
-            var filter = builder.Eq("available", true) & builder.Eq("address", Account);
-            var user= getMongoCollection.GetData(filter);
-            var ExpMenu = NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
-            var checkAccount = user.Length > 0 && await task;
-            if(checkAccount)
+            IsOpenDialog = true;
+            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+            Task taskProcess = Task.Factory.StartNew(async () =>
             {
-                registerParamaters.SetParamater("address", account);
-                NavigationService.NavigateTo("Main");
-                Account = null;
-                Password = null;
-                ExpMenu.IsEnabled = true;
-                ExpMenu.Visibility = Visibility.Visible;
-            }
+                try
+                {
+                    Task<bool> task = HelperUnti.CheckUnlockAccountAsync(Account, Password);
+                    var builder = Builders<User>.Filter;
+                    var filter = builder.Eq("available", true) & builder.Eq("address", Account);
+                    var user = getMongoCollection.GetData(filter);
+                    var checkAccount = user.Length > 0 && await task;
+                    if (checkAccount)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            var ExpMenu = NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
+                            registerParamaters.SetParamater("address", account);
+                            NavigationService.NavigateTo("Main");
+                            Account = null;
+                            Password = null;
+                            ExpMenu.IsEnabled = true;
+                            ExpMenu.Visibility = Visibility.Visible;
+                        });
+                    }
+                    IsOpenDialog = false;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            });
+            await taskProcess;
+            
         }
 
     }

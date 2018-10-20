@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:EthereumVoting"
         mc:Ignorable="d"
         ShowsNavigationUI="False"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         DataContext="{Binding Shell, Source={StaticResource Locator}}"
         Title="ShellWindow">
@@ -14,58 +15,61 @@
             <i:InvokeCommandAction Command="{Binding CommandLoaded}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid VerticalAlignment="Stretch"
+    <materialDesign:DialogHost CloseOnClickAway="True"
+                               IsOpen="{Binding IsOpenDialog}"
+                               DialogContent="{Binding ContentDialog}">
+        <Grid VerticalAlignment="Stretch"
           HorizontalAlignment="Stretch"
           Background="Red">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="5*"/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" >
-            <Expander ExpandDirection="Right"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" >
+                <Expander ExpandDirection="Right"
                       Name="ExpMenu"
                       Visibility="Hidden"
                       IsEnabled="False"
                       Grid.Column="0">
-                <Expander.Header>
-                    <StackPanel Orientation="Horizontal" 
+                    <Expander.Header>
+                        <StackPanel Orientation="Horizontal" 
                                 Height="{Binding ElementName=ExpMenu,Path=Height}">
 
-                        <TextBlock Text="Menu"
+                            <TextBlock Text="Menu"
                                VerticalAlignment="Center"
                                RenderTransformOrigin=".5,.5">
-                            <TextBlock.LayoutTransform>
-                                <RotateTransform Angle="90" />
-                            </TextBlock.LayoutTransform>
-                        </TextBlock>
-                    </StackPanel>
-                </Expander.Header>
-                <StackPanel>
-                    <Button x:Name="BtnUserPanel"
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="90" />
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                        </StackPanel>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Button x:Name="BtnUserPanel"
                             Command="{Binding CommandBtnUserClickNavigation}"
                             Content="User"/>
-                    <TextBlock/>
-                    <Button x:Name="BtnConfigPanel"
+                        <TextBlock/>
+                        <Button x:Name="BtnConfigPanel"
                             Content="Deploy"
                             Command="{Binding CommandBtnConfigClickNavigation}"/>
-                </StackPanel>
-            </Expander>
-        </Grid>
-        <Frame x:Name="MainFrame"
+                    </StackPanel>
+                </Expander>
+            </Grid>
+            <Frame x:Name="MainFrame"
                Grid.Column="1"
-               Background="Blue"
                NavigationUIVisibility="Hidden"
                VerticalContentAlignment="Stretch"
                HorizontalContentAlignment="Stretch"
                VerticalAlignment="Stretch"
                HorizontalAlignment="Stretch">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ContentRendered">
-                    <i:InvokeCommandAction Command="{Binding CommandNavigeted}"
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ContentRendered">
+                        <i:InvokeCommandAction Command="{Binding CommandNavigeted}"
                                            CommandParameter="{x:Reference Name=MainFrame}"/>
-                </i:EventTrigger>
-                
-            </i:Interaction.Triggers>
-        </Frame>
-    </Grid>
+                    </i:EventTrigger>
+
+                </i:Interaction.Triggers>
+            </Frame>
+        </Grid>
+    </materialDesign:DialogHost>
 </Page>
