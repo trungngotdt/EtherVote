@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using FastConfig.Model;
 using CommonLibrary;
 using System.Collections.Generic;
 using CommonLibrary.HelperMongo;

@@ -29,11 +29,10 @@ namespace EthereumVoting.ViewModel
 
 
 
-        const int barrerWait = 10;
-        const int numFakeData = 3;
+       
         private ObservableCollection<Candidate> candidates;
         private PropertiesOption option;
-        private int countCandidates;
+
         private bool isOpenDialog;
         private object contentDialog;
         private bool isEnabledBtnSubmited;
@@ -60,7 +59,7 @@ namespace EthereumVoting.ViewModel
         {
             EffectProgress(async () => { await SubmitVotingAsync(); });
         });
-            //
+
 
         public ICommand CommandChecked => commandChecked = new RelayCommand<string>((name) => { ToogleChecked(name); });
 
@@ -82,8 +81,8 @@ namespace EthereumVoting.ViewModel
 
         public bool IsEnabledBtnSubmited { get => isEnabledBtnSubmited; set {isEnabledBtnSubmited = value; RaisePropertyChanged("IsEnabledBtnSubmited");} }
 
-        public bool IsOpenSbNotify { get => isOpenSbNotify; set => isOpenSbNotify = value; }
-        public string MessageSbNotify { get => messageSbNotify; set => messageSbNotify = value; }
+        public bool IsOpenSbNotify { get => isOpenSbNotify; set  {isOpenSbNotify = value;RaisePropertyChanged("IsOpenSbNotify"); } }
+        public string MessageSbNotify { get => messageSbNotify; set {messageSbNotify = value; RaisePropertyChanged("MessageSbNotify");} }
 
         /// <summary>
         /// address of user in blockchain
@@ -230,9 +229,7 @@ namespace EthereumVoting.ViewModel
                 var builder = Builders<User>.Filter;
                 var filter = builder.Eq("available", true) & builder.Eq("address", address);
                 var user = getMongoCollection.GetData(filter);
-
                 return user.Cast<User>().ElementAt(0).VoteFor;
-
             });
             
         }

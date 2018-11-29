@@ -11,7 +11,6 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
-using FastConfig.Model;
 using CommonServiceLocator;
 using CommonLibrary;
 using CommonLibrary.HelperMongo;

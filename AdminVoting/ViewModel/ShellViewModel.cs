@@ -15,7 +15,6 @@ namespace AdminVoting.ViewModel
         private ICommand commandBtnDeployClickNavigation;
         private ICommand commandBtnUserClickNavigation;
         private ICommand commandLoaded;
-        private ICommand commandNavigeted;
 
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
         public ICommand CommandLoaded => commandLoaded = new RelayCommand(() => { NavigationService.NavigateTo("Login"); });

@@ -19,8 +19,8 @@ namespace CommonLibrary.HelperMongo
             {
                 var setting = new MongoClientSettings()
                 {
-                    Server = new MongoServerAddress("127.0.0.1", 27017),
-                    Credentials = new MongoCredential[] { MongoCredential.CreateCredential("data1", "user1", "pass1") }
+                    Server = new MongoServerAddress(url, port),//"127.0.0.1", 27017),
+                    Credentials = new MongoCredential[] { MongoCredential.CreateCredential("data1", name, pass) }//"user1", "pass1") }
                 };
                 Client = new MongoClient(setting);
                 return Client;
