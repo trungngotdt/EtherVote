@@ -30,7 +30,7 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="0.5*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Background="Aqua">
+            <Grid Grid.Row="0" >
                 <materialDesign:Snackbar x:Name="SbNotify"
                                          IsActive="{Binding IsOpenSbNotify}"
                                          VerticalAlignment="Top">
