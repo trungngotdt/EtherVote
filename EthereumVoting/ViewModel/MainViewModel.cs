@@ -37,6 +37,8 @@ namespace EthereumVoting.ViewModel
         private bool isOpenDialog;
         private object contentDialog;
         private bool isEnabledBtnSubmited;
+        private bool isOpenSbNotify;
+        private string messageSbNotify;
 
         private IHelper helper;
         private IHelperMongo helperMongo;
@@ -54,7 +56,11 @@ namespace EthereumVoting.ViewModel
             EffectProgress(()=> { CheckConditionFileConfig(async () => await LoadedAsync()); } );
         });
 
-        public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(async () => { await SubmitVotingAsync(); });
+        public ICommand CommandBtnSubmitedClick => commandBtnSubmitedClick = new RelayCommand(() => 
+        {
+            EffectProgress(async () => { await SubmitVotingAsync(); });
+        });
+            //
 
         public ICommand CommandChecked => commandChecked = new RelayCommand<string>((name) => { ToogleChecked(name); });
 
@@ -76,6 +82,9 @@ namespace EthereumVoting.ViewModel
 
         public bool IsEnabledBtnSubmited { get => isEnabledBtnSubmited; set {isEnabledBtnSubmited = value; RaisePropertyChanged("IsEnabledBtnSubmited");} }
 
+        public bool IsOpenSbNotify { get => isOpenSbNotify; set => isOpenSbNotify = value; }
+        public string MessageSbNotify { get => messageSbNotify; set => messageSbNotify = value; }
+
         /// <summary>
         /// address of user in blockchain
         /// </summary>
@@ -88,8 +97,7 @@ namespace EthereumVoting.ViewModel
         {
             this.registerParamaters = _registerParamaters;
             this.helper = _helper;
-            this.helperMongo = _helperMongo;
-            
+            this.helperMongo = _helperMongo;            
         }
 
         private async Task LoadedAsync()
@@ -145,8 +153,7 @@ namespace EthereumVoting.ViewModel
                         var result = await GetACandidateAsync(i);
                         result.IsEnable = true;
                         return result;
-                    }).Result);
-                    
+                    }).Result);                    
                 }
                 var resultTask = await Task.WhenAll<Candidate>(tasks);
                 arrayTemp.AddRange(resultTask);
@@ -174,24 +181,33 @@ namespace EthereumVoting.ViewModel
 
         private async Task SubmitVotingAsync()
         {
+            try
+            {
+                var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
+                await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
+                var previous = Builders<User>.Filter.Eq("address", address);
+                var update = Builders<User>.Update.Set("VoteFor", can.Name);
+                getMongoCollection.FindOneAndUpdateAsync(previous, update);
+                //var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
+                can.NumVote++;
+                IsEnabledBtnSubmited = false;
+                can.IsEnable = false;
+                //NavigationService.Navigate();
 
-            var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
-            await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
-            var previous = Builders<User>.Filter.Eq("address", address);
-            var update = Builders<User>.Update.Set("VoteFor", can.Name);
-            getMongoCollection.FindOneAndUpdateAsync(previous, update);
-            //var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
-            can.NumVote++;
-            IsEnabledBtnSubmited = false;
-            can.IsEnable = false;
-            //NavigationService.Navigate();
+            }
+            catch (Exception ex)
+            {
+                OpenSnackBarNotify(true, ex.Message);
+                throw ex;
+            }
+            
         }
 
         private async Task InitContractVotingAsync()
         {
             try
-            {                
-                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"), "0x7ce7c3cd469c2cff44012bf5913675770b48a3a6");
+            {
+                GetHelper.GetContract(ServiceLocator.Current.GetInstance<string>("abi"),Option.AddressContract );//"0x7ce7c3cd469c2cff44012bf5913675770b48a3a6");
             }
             catch (System.Exception ex)
             {
@@ -228,7 +244,14 @@ namespace EthereumVoting.ViewModel
             Task.Factory.StartNew(() =>
             {
                 action();
-            }).ContinueWith(t => { IsOpenDialog = false; }, TaskScheduler.FromCurrentSynchronizationContext());
+                IsOpenDialog = false;
+            }).ContinueWith(t => {  }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void OpenSnackBarNotify(bool isOpen, string message)
+        {
+            IsOpenSbNotify = isOpen;
+            MessageSbNotify = message;
         }
 
         ////public override void Cleanup()

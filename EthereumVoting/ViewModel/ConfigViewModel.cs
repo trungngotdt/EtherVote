@@ -18,6 +18,8 @@ namespace EthereumVoting.ViewModel
         private string bytecode;
         private string addressFile;
         private string addressContract;
+        private bool isOpenSbNotify;
+        private string messageSbNotify;
 
         private IWorkJson workjson;
 
@@ -31,12 +33,8 @@ namespace EthereumVoting.ViewModel
         public string ByteCode { get => bytecode; set  {bytecode = value;Option.ByteCode = value; RaisePropertyChanged("ByteCode");} }
         public string AddressFile { get => addressFile; set {addressFile = value;Option.AddressConfigFileDefault = value; RaisePropertyChanged("AddressFile");} }
         public string AddressContract { get => addressContract; set { addressContract = value;Option.AddressContract = value; RaisePropertyChanged("AddressContract");} }
-
-
-
+        
         public ICommand CommandBtnImportConfig => commandBtnImportConfig = new RelayCommand(() => { ImportFile(); });
-
-
 
         public IWorkJson Workjson { get => workjson; set => workjson = value; }
 
@@ -52,6 +50,9 @@ namespace EthereumVoting.ViewModel
             }
         }
 
+        public bool IsOpenSbNotify { get => isOpenSbNotify; set => isOpenSbNotify = value; }
+        public string MessageSbNotify { get => messageSbNotify; set => messageSbNotify = value; }
+
         public ConfigViewModel(IWorkJson json)
         {
             this.workjson = json;
@@ -66,35 +67,50 @@ namespace EthereumVoting.ViewModel
                 ByteCode = Option.ByteCode;
                 AddressContract = Option.AddressContract;
                 AddressFile = Option.AddressConfigFileDefault;
-            }
-            
+            }            
         }
 
         private void ImportFile()
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".json";
-            dlg.Filter = "Json (*.json)|*.json";
-            Nullable<bool> result = dlg.ShowDialog();
-            string fileAddress=String.Empty;
-            if (result == true)
-            {
-                fileAddress = dlg.FileName;
-            }
-            var resultRead= Workjson.ReadJson(fileAddress);
-            Task taskFile = Task.Factory.StartNew(() => 
-            {
-                if (File.Exists(Option.AddressConfigFileDefault))
+            try
+            {               
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                dlg.DefaultExt = ".json";
+                dlg.Filter = "Json (*.json)|*.json";
+                Nullable<bool> result = dlg.ShowDialog();
+                string fileAddress = String.Empty;
+                if (result==false)
                 {
-                    File.Delete(Option.AddressConfigFileDefault);
+                    return;
                 }
-                AddressFile = Option.AddressConfigFileDefault;
-                Workjson.WriteJson(resultRead, Option.AddressConfigFileDefault);
-            });
-            Abi = resultRead[0].Abi;
-            ByteCode = resultRead[0].Bytecode;
-            AddressContract = resultRead[0].AddressBlockChain;            
+                fileAddress = dlg.FileName;
+                var resultRead = Workjson.ReadJson(fileAddress);
+                Task taskFile = Task.Factory.StartNew(() =>
+                {
+                    if (File.Exists(Option.AddressConfigFileDefault))
+                    {
+                        File.Delete(Option.AddressConfigFileDefault);
+                    }
+                    AddressFile = Option.AddressConfigFileDefault;
+                    Workjson.WriteJson(resultRead, Option.AddressConfigFileDefault);
+                });
+                Abi = resultRead[0].Abi;
+                ByteCode = resultRead[0].Bytecode;
+                AddressContract = resultRead[0].AddressBlockChain;
+            }
+            catch (Exception ex)
+            {
+                OpenSnackBarNotify(true, ex.Message);
+                throw ex;
+            }
+           
         }
-        
+
+        private void OpenSnackBarNotify(bool isOpen, string message)
+        {
+            IsOpenSbNotify = isOpen;
+            MessageSbNotify = message;
+        }
+
     }
 }

@@ -1,9 +1,9 @@
-﻿<Page x:Class="AdminVoting.View.DeployPage"
+﻿<Window x:Class="FastConfig.MainWindow"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:AdminVoting.View"
+      xmlns:local="clr-namespace:FastConfig"
       mc:Ignorable="d"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -13,8 +13,8 @@
       TextOptions.TextRenderingMode="Auto"
       Background="{DynamicResource MaterialDesignPaper}"
       FontFamily="{DynamicResource MaterialDesignFont}"
-      DataContext="{Binding Deploy, Source={StaticResource Locator}}"
-      Title="DeployPage">
+      DataContext="{Binding Main, Source={StaticResource Locator}}"
+      Title="FastConfig">
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -63,4 +63,5 @@
                     Content="Deploy"/>
         </Grid>
     </Grid>
-</Page>
+</Window>
+

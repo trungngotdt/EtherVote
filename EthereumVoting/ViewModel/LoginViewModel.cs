@@ -16,6 +16,7 @@ using CommonLibrary;
 using CommonLibrary.HelperMongo;
 using System.Windows.Controls;
 using EthereumVoting.View;
+using System.Windows.Media;
 
 namespace EthereumVoting.ViewModel
 {
@@ -25,7 +26,11 @@ namespace EthereumVoting.ViewModel
         private string password;
         private bool isOpenDialog;
         private object contentDialog;
+        private bool isOpenSbNotify;
+        private string messageSbNotify;
 
+        private Brush accountBoderBrush;
+        private Brush passwordBoderBrush;
 
         private IHelper helperUnti;
         private IHelperMongo helperMongoUnti;
@@ -61,7 +66,11 @@ namespace EthereumVoting.ViewModel
             }
         }
 
+        public bool IsOpenSbNotify { get => isOpenSbNotify; set { isOpenSbNotify = value; RaisePropertyChanged("IsOpenSbNotify"); } }
+        public string MessageSbNotify { get => messageSbNotify; set {messageSbNotify = value; RaisePropertyChanged("MessageSbNotify"); } }
 
+        public Brush AccountBoderBrush { get => accountBoderBrush; set { accountBoderBrush = value;RaisePropertyChanged("AccountBoderBrush"); } }
+        public Brush PasswordBoderBrush { get => passwordBoderBrush; set {passwordBoderBrush = value;RaisePropertyChanged("PasswordBoderBrush"); } }
 
         public LoginViewModel(IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService, IRegisterParamaters _registerParamaters)
         {
@@ -74,6 +83,7 @@ namespace EthereumVoting.ViewModel
 
         void Init()
         {
+            ChangeBrush2Red(false);
             IsOpenDialog = true;
             ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
             Task taskProcess = Task.Factory.StartNew(() =>
@@ -110,18 +120,39 @@ namespace EthereumVoting.ViewModel
                             Password = null;
                             ExpMenu.IsEnabled = true;
                             ExpMenu.Visibility = Visibility.Visible;
+                            OpenSnackBarNotify(false, "");
                         });
+                    }
+                    else
+                    {
+                        ChangeBrush2Red(true);
+                        OpenSnackBarNotify(true,"Wrong account");
                     }
                     IsOpenDialog = false;
                 }
                 catch (Exception ex)
                 {
+                    ChangeBrush2Red(true);
+                    IsOpenDialog = false;
+                    OpenSnackBarNotify(true, ex.Message);
                     throw ex;
                 }
+                
             });
             await taskProcess;
             
         }
 
+        private void ChangeBrush2Red(bool isChange)
+        {
+            AccountBoderBrush = isChange ? Brushes.Red : Brushes.Black;
+            PasswordBoderBrush = isChange ? Brushes.Red : Brushes.Black;
+        }
+
+        private void OpenSnackBarNotify(bool isOpen,string message)
+        {
+            IsOpenSbNotify = isOpen;
+            MessageSbNotify = message;
+        }
     }
 }

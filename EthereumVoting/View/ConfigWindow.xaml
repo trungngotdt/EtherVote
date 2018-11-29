@@ -27,6 +27,11 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
+            <materialDesign:Snackbar x:Name="SbNotify"
+                                         IsActive="{Binding IsOpenSbNotify}"
+                                         VerticalAlignment="Top">
+                <materialDesign:SnackbarMessage Content="{Binding MessageSbNotify}"/>
+            </materialDesign:Snackbar>
             <TextBox materialDesign:HintAssist.Hint="ABI"
                      HorizontalAlignment="Stretch"
                      VerticalAlignment="Top"
@@ -66,6 +71,7 @@
             <Button x:Name="BtnImport"
                     Command="{Binding CommandBtnImportConfig}"
                     Content="Import"/>
+            
         </Grid>
     </Grid>
 </Page>

@@ -53,7 +53,6 @@ namespace CommonLibrary
         {
             try
             {
-
                 var result = await Web30.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(abi, byteCode, address, new HexBigInteger(900000));
                 return result;
             }
@@ -63,6 +62,12 @@ namespace CommonLibrary
             }
         }
 
+        /// <summary>
+        /// Get contract by abi and Address contract in BlockChain
+        /// </summary>
+        /// <param name="abi"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public Contract GetContract(string abi, string address)
         {
             try

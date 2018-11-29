@@ -50,7 +50,7 @@
                             Content="User"/>
                         <TextBlock/>
                         <Button x:Name="BtnConfigPanel"
-                            Content="Deploy"
+                            Content="Config"
                             Command="{Binding CommandBtnConfigClickNavigation}"/>
                     </StackPanel>
                 </Expander>

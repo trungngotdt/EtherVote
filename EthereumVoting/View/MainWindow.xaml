@@ -30,7 +30,13 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="0.5*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Background="Aqua"/>
+            <Grid Grid.Row="0" Background="Aqua">
+                <materialDesign:Snackbar x:Name="SbNotify"
+                                         IsActive="{Binding IsOpenSbNotify}"
+                                         VerticalAlignment="Top">
+                    <materialDesign:SnackbarMessage Content="{Binding MessageSbNotify}"/>
+                </materialDesign:Snackbar>
+            </Grid>
             <Grid Grid.Row="1">
                 <ListView x:Name="LstCandicates" 
                       ItemsSource="{Binding Candidates}">
@@ -40,8 +46,11 @@
                                         DisplayMemberBinding="{Binding Name}"/>
                             <GridViewColumn Header="Number of Vote"
                                         DisplayMemberBinding="{Binding NumVote}"/>
-                            <GridViewColumn Header="aaa"
+                            <!--
+                             <GridViewColumn Header="aaa"
                                         DisplayMemberBinding="{Binding NumVote,Mode=TwoWay}"/>
+                            -->
+                           
                             <GridViewColumn Header="Voting">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>

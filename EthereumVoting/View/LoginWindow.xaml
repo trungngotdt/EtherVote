@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EthereumVoting.View"
+      
         mc:Ignorable="d"
         xmlns:helper="clr-namespace:CommonLibrary;assembly=CommonLibrary"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -34,6 +35,11 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
+                <materialDesign:Snackbar x:Name="SbNotify"
+                                         IsActive="{Binding IsOpenSbNotify}"
+                                         VerticalAlignment="Top">
+                    <materialDesign:SnackbarMessage Content="{Binding MessageSbNotify}"/>
+                </materialDesign:Snackbar>
                 <TextBlock FontSize="40" VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Text="Login Page"/>
@@ -45,32 +51,35 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
-                    <TextBox x:Name="TxbAccount"
-                         Text="{Binding Account,Mode=TwoWay}"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Center"
-                         Width="500"
-                         FontSize="30"
-                         materialDesign:HintAssist.Hint="Your Address"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                </Grid>
-                <Grid Grid.Row="1">
-                    <PasswordBox x:Name="PwbPassword"
-                             helper:PasswordHelper.Attach="True"                             
-                             helper:PasswordHelper.Password="{Binding Password,Mode=TwoWay}"
+                    <TextBox x:Name="TxbAccount" 
+                             BorderBrush="{Binding AccountBoderBrush}"
+                             Text="{Binding Account,Mode=TwoWay}"
                              VerticalAlignment="Center"
                              HorizontalAlignment="Center"
                              Width="500"
                              FontSize="30"
-                             materialDesign:HintAssist.Hint="Password"
-                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                             materialDesign:HintAssist.Hint="Your Address"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                </Grid>
+                <Grid Grid.Row="1">
+                    <PasswordBox x:Name="PwbPassword"
+                                 BorderBrush="{Binding PasswordBoderBrush}"
+                                 helper:PasswordHelper.Attach="True"                             
+                                 helper:PasswordHelper.Password="{Binding Password,Mode=TwoWay}"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center"
+                                 Width="500"
+                                 FontSize="30"
+                                 materialDesign:HintAssist.Hint="Password"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
                 </Grid>
             </Grid>
             <Grid Grid.Row="2">
                 <Button x:Name="BtnSignIn"
-                    Content="Sign In"
-                    Command="{Binding CommandBtnSubmitClick}"
-                    Width="500"/>
+                        IsDefault="True"
+                        Content="Sign In"
+                        Command="{Binding CommandBtnSubmitClick}"
+                        Width="500"/>
             </Grid>
 
         </Grid>

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminVoting", "AdminVoting\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "CommonLibrary\CommonLibrary.csproj", "{0777523B-75D8-41AF-88C5-504A033B98D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastConfig", "FastConfig\FastConfig.csproj", "{AE2E155D-2D84-4D65-89FF-212E60E0A363}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0777523B-75D8-41AF-88C5-504A033B98D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0777523B-75D8-41AF-88C5-504A033B98D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0777523B-75D8-41AF-88C5-504A033B98D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE2E155D-2D84-4D65-89FF-212E60E0A363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE2E155D-2D84-4D65-89FF-212E60E0A363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE2E155D-2D84-4D65-89FF-212E60E0A363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE2E155D-2D84-4D65-89FF-212E60E0A363}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -35,18 +41,21 @@ Global
 		SolutionGuid = {742B18E6-0C5C-4EB1-B79F-81A5752200B2}
 	EndGlobalSection
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://ngotrung.visualstudio.com/
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = EthereumVoting\\EthereumVoting.csproj
-		SccProjectName1 = EthereumVoting
-		SccLocalPath1 = EthereumVoting
-		SccProjectUniqueName2 = AdminVoting\\AdminVoting.csproj
-		SccProjectName2 = AdminVoting
-		SccLocalPath2 = AdminVoting
-		SccProjectUniqueName3 = CommonLibrary\\CommonLibrary.csproj
-		SccProjectName3 = CommonLibrary
-		SccLocalPath3 = CommonLibrary
+		SccProjectUniqueName1 = AdminVoting\\AdminVoting.csproj
+		SccProjectName1 = AdminVoting
+		SccLocalPath1 = AdminVoting
+		SccProjectUniqueName2 = CommonLibrary\\CommonLibrary.csproj
+		SccProjectName2 = CommonLibrary
+		SccLocalPath2 = CommonLibrary
+		SccProjectUniqueName3 = EthereumVoting\\EthereumVoting.csproj
+		SccProjectName3 = EthereumVoting
+		SccLocalPath3 = EthereumVoting
+		SccProjectUniqueName4 = FastConfig\\FastConfig.csproj
+		SccProjectName4 = FastConfig
+		SccLocalPath4 = FastConfig
 	EndGlobalSection
 EndGlobal

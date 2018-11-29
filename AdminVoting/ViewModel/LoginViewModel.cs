@@ -23,7 +23,8 @@ namespace AdminVoting.ViewModel
         private string password;
         private bool isOpenDialog;
         private object contentDialog;
-
+        private bool isOpenSbNotify;
+        private string messageSbNotify;
 
         private IHelper helperUnti;
         private IHelperMongo helperMongoUnti;
@@ -37,14 +38,19 @@ namespace AdminVoting.ViewModel
         public IHelperMongo HelperMongoUnti { get => helperMongoUnti; set => helperMongoUnti = value; }
         public string Account { get => account; set => account = value; }
         public string Password { get => password; set => password = value; }
-        public ICommand CommandBtnSubmitClick=> commandBtnSubmitClick = new RelayCommand(async () => {await SubmitClickAsync(); });
-
+        public ICommand CommandBtnSubmitClick=> commandBtnSubmitClick = new RelayCommand(()=> 
+        {
+            CheckException(async () => {await SubmitClickAsync(); });
+        });
+        
         public IFrameNavigationService NavigationService { get => _navigationService; set => _navigationService = value; }
         public IRegisterParamaters RegisterParamaters { get => registerParamaters; set => registerParamaters = value; }
 
         public bool IsOpenDialog { get => isOpenDialog; set { isOpenDialog = value; RaisePropertyChanged("IsOpenDialog"); } }
         public object ContentDialog { get => contentDialog; set { contentDialog = value; RaisePropertyChanged("ContentDialog"); } }
-        
+
+        public string MessageSbNotify { get => messageSbNotify; set => messageSbNotify = value; }
+        public bool IsOpenSbNotify { get => isOpenSbNotify; set => isOpenSbNotify = value; }
 
         public LoginViewModel( IHelper _helper, IHelperMongo _helperMongo, IFrameNavigationService navigationService,IRegisterParamaters _registerParamaters)
         {
@@ -53,7 +59,8 @@ namespace AdminVoting.ViewModel
             this.helperUnti = _helper;
             this._navigationService = navigationService;
             this.helperMongoUnti = _helperMongo;
-            Init();
+            CheckException(() => {Init(); });
+            
         }        
 
         void Init()
@@ -93,9 +100,30 @@ namespace AdminVoting.ViewModel
                      Password = null;
                      IsOpenDialog = false;
                  }
-             });
+                 else
+                 {
+                     OpenSnackBarNotify(true, "Wrong Account");
+                 }
+             });            
+        }
 
-            
+        private void OpenSnackBarNotify(bool isOpen, string message)
+        {
+            IsOpenSbNotify = isOpen;
+            MessageSbNotify = message;
+        }
+
+        private void CheckException(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                OpenSnackBarNotify(true, ex.Message);
+                throw;
+            }
         }
 
     }

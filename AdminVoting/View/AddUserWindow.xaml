@@ -5,7 +5,7 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             xmlns:local="clr-namespace:AdminVoting.View"
             mc:Ignorable="d"
-             xmlns:converter="clr-namespace:AdminVoting.ValueConverterPara"
+            xmlns:converter="clr-namespace:AdminVoting.ValueConverterPara"
             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -13,11 +13,11 @@
             TextElement.FontSize="13"
             TextOptions.TextFormattingMode="Ideal"
             TextOptions.TextRenderingMode="Auto"
-             Width="350"
-             DataContext="{Binding AddUser, Source={StaticResource Locator}}"
-             Height="170"
-                Background="{DynamicResource MaterialDesignPaper}"
-                FontFamily="{DynamicResource MaterialDesignFont}">
+            Width="350"
+            DataContext="{Binding AddUser, Source={StaticResource Locator}}"
+            Height="200"
+            Background="{DynamicResource MaterialDesignPaper}"
+            FontFamily="{DynamicResource MaterialDesignFont}">
     <UserControl.Resources>
         <converter:ConverterAddUserParaNAR x:Key="ConverterNAR"/>
     </UserControl.Resources>
@@ -28,6 +28,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
+            <materialDesign:Snackbar x:Name="SbNotify"
+                                     IsActive="{Binding IsOpenSbNotify}"
+                                     VerticalAlignment="Top">
+                <materialDesign:SnackbarMessage Content="{Binding MessageSbNotify}"/>
+            </materialDesign:Snackbar>
             <TextBox x:Name="TxbName"
                      VerticalAlignment="Center"
                      materialDesign:HintAssist.Hint="Name"
@@ -102,7 +107,6 @@
             <Button IsCancel="True"
                     Grid.Column="1"
                     Style="{DynamicResource MaterialDesignFlatButton}">
-
                 CANCEL
             </Button>
         </Grid>
