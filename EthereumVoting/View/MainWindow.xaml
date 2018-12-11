@@ -45,6 +45,7 @@
                             <GridViewColumn Header="Name"
                                         DisplayMemberBinding="{Binding Name}"/>
                             <GridViewColumn Header="Number of Vote"
+                                            Width="{Binding ElementName=LstCandicates,Path=DataContext.NOVoteWidth,Mode=OneWay}"
                                         DisplayMemberBinding="{Binding NumVote}"/>
                             <!--
                              <GridViewColumn Header="aaa"

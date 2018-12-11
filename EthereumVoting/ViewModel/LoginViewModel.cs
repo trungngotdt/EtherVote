@@ -115,6 +115,7 @@ namespace EthereumVoting.ViewModel
                         {
                             var ExpMenu = NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
                             registerParamaters.SetParamater("address", account);
+                            registerParamaters.SetParamater("role", (user.GetValue(0) as User).Role);
                             NavigationService.NavigateTo("Main");
                             Account = null;
                             Password = null;

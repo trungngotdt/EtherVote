@@ -25,9 +25,9 @@ namespace EthereumVoting.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private int countCheckedCandidates=2;
+
         private Task<int> taskCountCandidates;
-
-
 
        
         private ObservableCollection<Candidate> candidates;
@@ -38,6 +38,8 @@ namespace EthereumVoting.ViewModel
         private bool isEnabledBtnSubmited;
         private bool isOpenSbNotify;
         private string messageSbNotify;
+        public int NOVoteWidth { get; set; }
+        private List<string> candidatesIsCheck;
 
         private IHelper helper;
         private IHelperMongo helperMongo;
@@ -96,7 +98,8 @@ namespace EthereumVoting.ViewModel
         {
             this.registerParamaters = _registerParamaters;
             this.helper = _helper;
-            this.helperMongo = _helperMongo;            
+            this.helperMongo = _helperMongo;
+            candidatesIsCheck = new List<string>();
         }
 
         private async Task LoadedAsync()
@@ -104,14 +107,18 @@ namespace EthereumVoting.ViewModel
             Init();
             await InitContractVotingAsync();
             taskCountCandidates = GetHelper.CallFunctionAsync<int>(address, "GetVoterCount", new object[] {  });
+            var role = registerParamaters.GetParamater("role");
+            NOVoteWidth = role.Equals("admin") ? 100 : 0;
+            RaisePropertyChanged("NOVoteWidth");
             await GetCandidatesAsync();
             var votefor = await IsExistVoteFor();
             if (votefor.Trim().Count()!=0)
             {
+                var candidates = votefor.Split(' ');
                 IsEnabledBtnSubmited = false;
                 Candidates.AsParallel().ForAll(x => 
                 {
-                    x.IsCheck = x.Name.Equals(votefor);
+                    x.IsCheck = candidates.Contains(x.Name);// x.Name.Equals(votefor);
                     x.IsEnable = false;
                 });
             }
@@ -131,11 +138,34 @@ namespace EthereumVoting.ViewModel
 
         private void ToogleChecked(string name)
         {
-            Candidates.AsParallel().ForAll(item => 
+            var itemRm = candidatesIsCheck.AsParallel().Contains(name);
+            if (itemRm)
             {
-                item.IsEnable = item.Name.Equals(name) || !item.IsEnable;
-            });
-            RaisePropertyChanged("Candidates");
+                Candidates.AsParallel().First(item => item.Name.Equals(name)).IsCheck=false;
+                candidatesIsCheck.Remove(name);
+                if(countCheckedCandidates==0)
+                {
+                    Candidates.AsParallel().ForAll(item =>
+                    {
+                        item.IsEnable = true;
+                    });
+                }                
+                countCheckedCandidates++;
+                return;
+            }
+            candidatesIsCheck.Add(name);
+            if(countCheckedCandidates==1)
+            {
+                Candidates.AsParallel().ForAll(item =>
+                {
+                    item.IsEnable = candidatesIsCheck.AsParallel().Contains(item.Name) || !item.IsEnable;
+                });
+                RaisePropertyChanged("Candidates");
+                countCheckedCandidates--;
+                return;
+            }
+            countCheckedCandidates--;
+            
         }
 
         private async Task GetCandidatesAsync()
@@ -182,22 +212,35 @@ namespace EthereumVoting.ViewModel
         {
             try
             {
-                var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
-                await GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { can.Name });
-                var previous = Builders<User>.Filter.Eq("address", address);
-                var update = Builders<User>.Update.Set("VoteFor", can.Name);
+                if (countCheckedCandidates!=0)
+                {
+                    throw (new Exception("You have "+countCheckedCandidates+" candidates for voting"));
+                }
+                //var can = Candidates.AsParallel().FirstOrDefault(item => item.IsCheck);
+                foreach (var item in candidatesIsCheck)
+                {
+                    var voting= GetHelper.SendTransactionFunctionAsync(address, "VoteFor", new object[] { item });
+                    var can= Candidates.AsParallel().FirstOrDefault(i => i.Name.Equals(item));
+                    can.NumVote++;
+                    can.IsEnable = false;
+                    await voting;
+                }               
+
+                var previous = Builders<User>.Filter.Eq("address", address);                
+                var update = Builders<User>.Update.Set("VoteFor", String.Join(" ", candidatesIsCheck.ToArray()));
                 getMongoCollection.FindOneAndUpdateAsync(previous, update);
                 //var task = await GetHelper.GetCallDeserializingToObjectAsync<Candidate>(address, "candidates", new object[] { can.Name });
-                can.NumVote++;
+                
+                //can.NumVote++;
                 IsEnabledBtnSubmited = false;
-                can.IsEnable = false;
+                //can.IsEnable = false;
                 //NavigationService.Navigate();
 
             }
             catch (Exception ex)
             {
                 OpenSnackBarNotify(true, ex.Message);
-                throw ex;
+                //throw ex;
             }
             
         }
@@ -236,13 +279,24 @@ namespace EthereumVoting.ViewModel
 
         private void EffectProgress(Action action)
         {
-            IsOpenDialog = true;
-            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
-            Task.Factory.StartNew(() =>
+            try
             {
-                action();
+                IsOpenDialog = true;
+                ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+                Task.Factory.StartNew(() =>
+                {
+                    action();
+                    IsOpenDialog = false;
+                }).ContinueWith(t => { }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            }
+            catch (Exception ex)
+            {
+                OpenSnackBarNotify(true, ex.Message);
                 IsOpenDialog = false;
-            }).ContinueWith(t => {  }, TaskScheduler.FromCurrentSynchronizationContext());
+                //throw;
+            }
+            
         }
 
         private void OpenSnackBarNotify(bool isOpen, string message)

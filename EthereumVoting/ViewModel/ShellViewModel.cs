@@ -23,6 +23,8 @@ namespace EthereumVoting.ViewModel
         private ICommand commandNavigeted;
         private ICommand commandBtnConfigClickNavigation;
         private ICommand commandBtnUserClickNavigation;
+        private ICommand commandBtnLogOut;
+
         private bool isOpenDialog;
         private object contentDialog;
 
@@ -51,6 +53,23 @@ namespace EthereumVoting.ViewModel
 
         public ICommand CommandBtnConfigClickNavigation => commandBtnConfigClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Config"); });
         public ICommand CommandBtnUserClickNavigation => commandBtnUserClickNavigation = new RelayCommand(() => { NavigationService.NavigateTo("Main"); });
+
+        public ICommand CommandBtnLogOut => commandBtnLogOut = new RelayCommand(() => 
+        {
+            var ExpMenu = NavigationService.GetDescendantFromName(Application.Current.MainWindow, "ExpMenu") as Expander;
+            ExpMenu.IsEnabled = false;
+            ExpMenu.Visibility = Visibility.Hidden;
+            IsOpenDialog = true;
+            ContentDialog = ServiceLocator.Current.GetInstance<ProgressDialogWindow>("Progress");
+            Task.Factory.StartNew(() =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    NavigationService.NavigateTo("Login");
+                });
+                IsOpenDialog = false;
+            });
+        });
 
         public ShellViewModel(IFrameNavigationService navigationService)
         {

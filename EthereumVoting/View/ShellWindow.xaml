@@ -38,8 +38,8 @@
                       IsEnabled="False"
                       Grid.Column="0">
                     <Expander.Header>
-                        <StackPanel Orientation="Horizontal" 
-                                Height="{Binding ElementName=ExpMenu,Path=Height}">
+                        <StackPanel Orientation="Horizontal"
+                                    Height="{Binding ElementName=ExpMenu,Path=Height}">
 
                             <TextBlock Text="Menu"
                                VerticalAlignment="Center"
@@ -58,6 +58,10 @@
                         <Button x:Name="BtnConfigPanel"
                             Content="Config"
                             Command="{Binding CommandBtnConfigClickNavigation}"/>
+                        <TextBlock/>
+                        <Button x:Name="BtnLogOut"
+                                Content="Log Out"
+                                Command="{Binding CommandBtnLogOut}"/>
                     </StackPanel>
                 </Expander>
             </Grid>
