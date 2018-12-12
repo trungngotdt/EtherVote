@@ -122,6 +122,7 @@ namespace EthereumVoting.ViewModel
                     x.IsEnable = false;
                 });
             }
+            RaisePropertyChanged("Candidates");
         }
 
         private void Init()
