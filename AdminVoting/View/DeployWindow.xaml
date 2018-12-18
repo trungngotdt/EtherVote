@@ -15,7 +15,11 @@
       FontFamily="{DynamicResource MaterialDesignFont}"
       DataContext="{Binding Deploy, Source={StaticResource Locator}}"
       Title="DeployPage">
-    <Grid Margin="16">
+    <materialDesign:DialogHost CloseOnClickAway="True"
+                               IsOpen="{Binding IsOpenDialog}"
+                               DialogContent="{Binding ContentDialog}">
+        
+        <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
@@ -63,4 +67,6 @@
                     Content="Deploy"/>
         </Grid>
     </Grid>
+    </materialDesign:DialogHost>
+        
 </Page>

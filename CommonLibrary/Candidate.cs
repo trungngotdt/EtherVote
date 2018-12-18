@@ -27,7 +27,7 @@ namespace CommonLibrary
 
         [Parameter("bool", "isExist", 3)]
         public bool IsExist { get => isExist; set => isExist = value; }
-        public bool IsCheck { get => isCheck; set => isCheck = value; }
+        public bool IsCheck { get => isCheck; set  {isCheck = value; OnPropertyChanged("IsCheck");} }
         public bool IsEnable { get => isEnable; set { isEnable = value;OnPropertyChanged("IsEnable");  } }
         
         public Candidate()
