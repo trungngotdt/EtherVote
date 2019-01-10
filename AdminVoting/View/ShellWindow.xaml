@@ -15,8 +15,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid VerticalAlignment="Stretch"
-          HorizontalAlignment="Stretch"
-          Background="Red">
+          HorizontalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="5*"/>

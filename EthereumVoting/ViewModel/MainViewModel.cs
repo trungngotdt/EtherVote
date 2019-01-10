@@ -124,8 +124,7 @@ namespace EthereumVoting.ViewModel
             RaisePropertyChanged("NOVoteWidth");
             //InitCommand();
             await taskGetCandidate;
-            /*
-             * if (role.Equals("admin"))
+            if (role.Equals("admin"))
             {
                 Candidates.AsParallel().ForAll(x => {x.IsEnable = false;});                
             }
@@ -142,18 +141,6 @@ namespace EthereumVoting.ViewModel
                         x.IsEnable = false;
                     });
                 }
-            }            
-             */
-            var votefor = await IsExistVoteFor();
-            if (!String.IsNullOrEmpty(votefor))
-            {
-                var candidates = votefor.Split(' ');
-                IsEnabledBtnSubmited = false;
-                Candidates.AsParallel().ForAll(x =>
-                {
-                    x.IsCheck = candidates.Contains(x.Name);// x.Name.Equals(votefor);
-                    x.IsEnable = false;
-                });
             }
             OpenDialog(false);
             RaisePropertyChanged("Candidates");
@@ -179,6 +166,7 @@ namespace EthereumVoting.ViewModel
                 {
                     try
                     {
+                        OpenDialog(true);
                         await SubmitVotingAsync();
                     }
                     catch (Exception ex)
@@ -192,8 +180,8 @@ namespace EthereumVoting.ViewModel
 
         private void ToogleChecked(string name)
         {
-            var itemRm = candidatesIsCheck.AsParallel().Contains(name);
-            if (itemRm)
+            var itemIsAlReadyCheck = candidatesIsCheck.AsParallel().Contains(name);
+            if (itemIsAlReadyCheck)
             {
                 Candidates.AsParallel().First(item => item.Name.Equals(name)).IsCheck = false;
                 candidatesIsCheck.Remove(name);
